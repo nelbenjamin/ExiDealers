@@ -482,23 +482,99 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
 </head>
 <body>
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="index.html">
+        <a class="navbar-brand" href="index.html">
             <img src="logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/view">Browse Cars</a></li>
-          <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
-        </ul>
-      </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                <li class="nav-item dropdown" id="userDropdownContainer">
+                    <!-- User dropdown will be inserted here by JavaScript -->
+                </li>
+            </ul>
+        </div>
     </div>
-  </nav>
+</nav>
+
+<script>
+// Add this script to the bottom of each page (before closing body tag)
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadUserNavigation();
+});
+
+async function loadUserNavigation() {
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        const container = document.getElementById('userDropdownContainer');
+        
+        if (data.authenticated) {
+            container.innerHTML = `
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                    <span class="user-initials" style="width: 35px; height: 35px; background: #ffc107; color: #1a365d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 5px;">
+                        ${data.user.initials}
+                    </span>
+                    ${data.user.firstName}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                    <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                    <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            `;
+        } else {
+            container.innerHTML = `
+                <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Sign In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+            `;
+        }
+        
+        // Initialize Bootstrap dropdown
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+    } catch (error) {
+        console.error('Error loading navigation:', error);
+    }
+}
+
+async function logoutUser() {
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.reload();
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
+</script>
+
+<style>
+.user-initials {
+    width: 35px;
+    height: 35px;
+    background: #ffc107;
+    color: #1a365d;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: 5px;
+}
+</style>
 
   <!-- Car Name Display Section -->
   <section class="car-name-display">
@@ -1351,7 +1427,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <hr class="bg-light" />
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <p>&copy; 2025 Exi Dealers. All rights reserved.</p>
+                    <p>&copy; 2026 Exi Dealers. All rights reserved.</p>
                 </div>
             </div>
         </div>

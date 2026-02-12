@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Exi Dealers</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a365d;
+            --secondary-blue: #2c5282;
+            --accent-blue: #3182ce;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 60px 0 80px;
+            margin-top: 76px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin: 0 auto 20px;
+            border: 4px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .profile-email {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .profile-member-since {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-wrapper {
+            margin-top: -50px;
+            margin-bottom: 50px;
+        }
+
+        .dashboard-sidebar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .dashboard-sidebar .nav-link {
+            padding: 15px 20px;
+            color: #495057;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .dashboard-sidebar .nav-link i {
+            width: 25px;
+            color: var(--secondary-blue);
+        }
+
+        .dashboard-sidebar .nav-link.active {
+            background: linear-gradient(to right, rgba(26, 54, 93, 0.05), transparent);
+            border-left-color: var(--primary-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .dashboard-sidebar .nav-link:hover:not(.active) {
+            background: #f8f9fa;
+            border-left-color: #dee2e6;
+        }
+
+        .dashboard-sidebar .nav-link.text-danger {
+            color: #dc3545;
+        }
+
+        .dashboard-sidebar .nav-link.text-danger i {
+            color: #dc3545;
+        }
+
+        .dashboard-content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .content-header {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .content-header h4 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+
+        /* Car Cards */
+        .car-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .car-card img {
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .car-card .card-body {
+            padding: 15px;
+        }
+
+        .car-card .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .car-card .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .car-card .details {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        .car-card .btn-sm {
+            padding: 5px 12px;
+            font-size: 13px;
+        }
+
+        /* Alert Cards */
+        .alert-card {
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 10px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .alert-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .alert-card.active {
+            border-left-color: #28a745;
+        }
+
+        .alert-card.inactive {
+            border-left-color: #dc3545;
+            opacity: 0.7;
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .alert-details {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h5 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        /* Profile Form */
+        .profile-form .form-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .profile-form .form-control {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+        }
+
+        .profile-form .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(49, 130, 206, 0.25);
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .danger-zone h6 {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .navbar-brand img {
+            filter: brightness(0) invert(1);
+            height: 60px !important;
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 40px 0 60px;
+                margin-top: 66px;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+
+            .profile-name {
+                font-size: 26px;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+        }
+
+        /* User Initials Circle in Navbar */
+        .user-initials {
+            width: 40px;
+            height: 40px;
+            background: #ffc107;
+            color: #1a365d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        .nav-link .user-initials {
+            display: inline-flex;
+        }
+
+        .dropdown-toggle::after {
+            vertical-align: middle;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            padding: 10px 0;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--secondary-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                    <li class="nav-item dropdown" id="userDropdownContainer">
+                        <!-- User dropdown will be inserted here by JavaScript -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <section class="profile-header">
+        <div class="container text-center">
+            <div class="profile-avatar" id="userInitials">JD</div>
+            <h1 class="profile-name" id="userFullName">John Doe</h1>
+            <div class="profile-email" id="userEmail">john.doe@example.com</div>
+            <div class="profile-member-since" id="memberSince">Member since January 2025</div>
+        </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-wrapper">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="dashboard-sidebar">
+                        <div class="list-group list-group-flush">
+                            <a href="#profile" class="list-group-item list-group-item-action nav-link active" data-section="profile">
+                                <i class="fas fa-user me-2"></i> My Profile
+                            </a>
+                            <a href="#favorites" class="list-group-item list-group-item-action nav-link" data-section="favorites">
+                                <i class="fas fa-heart me-2"></i> Favorite Cars
+                            </a>
+                            <a href="#saved" class="list-group-item list-group-item-action nav-link" data-section="saved">
+                                <i class="fas fa-bookmark me-2"></i> Saved for Later
+                            </a>
+                            <a href="#alerts" class="list-group-item list-group-item-action nav-link" data-section="alerts">
+                                <i class="fas fa-bell me-2"></i> Price Alerts
+                            </a>
+                            <a href="#recent" class="list-group-item list-group-item-action nav-link" data-section="recent">
+                                <i class="fas fa-history me-2"></i> Recent Activity
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#settings" class="list-group-item list-group-item-action nav-link" data-section="settings">
+                                <i class="fas fa-cog me-2"></i> Account Settings
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action nav-link text-danger" onclick="logoutUser()">
+                                <i class="fas fa-sign-out-alt me-2"></i> Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="dashboard-content" id="dashboardContent">
+                        <!-- Content will be loaded dynamically -->
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">Are you sure you want to delete your account? This action <strong>cannot be undone</strong>.</p>
+                    <p class="mb-0 text-muted">All your data, including favorites, saved cars, and price alerts will be permanently removed.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAccount()">
+                        <i class="fas fa-trash me-2"></i>Delete My Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="currentPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordField('currentPassword', this)">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordField('newPassword', this)">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Password must be at least 8 characters long</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmNewPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordField('confirmNewPassword', this)">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="changePassword()">
+                        <i class="fas fa-save me-2"></i>Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentSection = 'profile';
+
+        // ============= INITIALIZATION =============
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            await checkAuth();
+            
+            // Load navigation
+            await loadNavigation();
+            
+            // Load initial section based on URL hash
+            const hash = window.location.hash.substring(1) || 'profile';
+            currentSection = hash;
+            loadSection(hash);
+            
+            // Handle sidebar navigation
+            document.querySelectorAll('.dashboard-sidebar .nav-link[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    
+                    // Update active state
+                    document.querySelectorAll('.dashboard-sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update URL hash
+                    window.location.hash = section;
+                    
+                    // Load section
+                    currentSection = section;
+                    loadSection(section);
+                });
+            });
+        });
+
+        // ============= AUTHENTICATION =============
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    // Redirect to login if not authenticated
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Store user data
+                currentUser = data.user;
+                
+                // Update profile header
+                document.getElementById('userInitials').textContent = data.user.initials;
+                document.getElementById('userFullName').textContent = `${data.user.firstName} ${data.user.lastName}`;
+                document.getElementById('userEmail').textContent = data.user.email;
+                
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        async function logoutUser() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+
+        // ============= NAVIGATION =============
+        async function loadNavigation() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+                
+                const container = document.getElementById('userDropdownContainer');
+                
+                if (data.authenticated) {
+                    container.innerHTML = `
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <span class="user-initials">${data.user.initials}</span>
+                            ${data.user.firstName}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                            <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                            <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Sign In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading navigation:', error);
+            }
+        }
+
+        // ============= SECTION LOADING =============
+        async function loadSection(section) {
+            const content = document.getElementById('dashboardContent');
+            
+            switch(section) {
+                case 'profile':
+                    content.innerHTML = await getProfileHTML();
+                    initProfileForm();
+                    break;
+                case 'favorites':
+                    content.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div></div>';
+                    content.innerHTML = await getFavoritesHTML();
+                    break;
+                case 'saved':
+                    content.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div></div>';
+                    content.innerHTML = await getSavedHTML();
+                    break;
+                case 'alerts':
+                    content.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div></div>';
+                    content.innerHTML = await getAlertsHTML();
+                    break;
+                case 'recent':
+                    content.innerHTML = await getRecentActivityHTML();
+                    break;
+                case 'settings':
+                    content.innerHTML = await getSettingsHTML();
+                    break;
+                default:
+                    content.innerHTML = await getProfileHTML();
+                    initProfileForm();
+            }
+        }
+
+        // ============= PROFILE SECTION =============
+        async function getProfileHTML() {
+            try {
+                const response = await fetch('/api/auth/profile');
+                const user = await response.json();
+                
+                const memberDate = new Date(user.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long'
+                });
+                
+                return `
+                    <div class="content-header">
+                        <h4><i class="fas fa-user me-2"></i>My Profile</h4>
+                    </div>
+                    
+                    <form id="profileForm" class="profile-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" value="${user.firstName}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" value="${user.lastName}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" value="${user.email}" readonly disabled>
+                            <div class="form-text">Email cannot be changed</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" value="${user.phone || ''}" placeholder="Optional">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Member Since</label>
+                            <p class="form-control-static">${memberDate}</p>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </form>
+                `;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                return '<div class="alert alert-danger">Failed to load profile</div>';
+            }
+        }
+
+        function initProfileForm() {
+            const form = document.getElementById('profileForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    
+                    try {
+                        const response = await fetch('/api/auth/profile', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                firstName: document.getElementById('firstName').value,
+                                lastName: document.getElementById('lastName').value,
+                                phone: document.getElementById('phone').value
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            showToast('Profile updated successfully');
+                            // Reload navigation to update name
+                            await loadNavigation();
+                            // Reload profile header
+                            await checkAuth();
+                        } else {
+                            showToast('Failed to update profile', 'danger');
+                        }
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        showToast('Error updating profile', 'danger');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                });
+            }
+        }
+
+        // ============= FAVORITES SECTION =============
+        async function getFavoritesHTML() {
+            try {
+                const response = await fetch('/api/user/favorites');
+                const favorites = await response.json();
+                
+                let html = `
+                    <div class="content-header">
+                        <h4><i class="fas fa-heart me-2"></i>Favorite Cars</h4>
+                    </div>
+                `;
+                
+                if (favorites.length === 0) {
+                    html += `
+                        <div class="empty-state">
+                            <i class="fas fa-heart"></i>
+                            <h5>No Favorite Cars Yet</h5>
+                            <p>Start adding cars to your favorites by clicking the heart icon on any car</p>
+                            <a href="/view" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Browse Cars
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    html += '<div class="row">';
+                    
+                    favorites.forEach(car => {
+                        const primaryImage = car.images?.find(img => img.isPrimary)?.imageUrl || car.images?.[0]?.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image';
+                        const displayPrice = car.price || 'N/A';
+                        
+                        html += `
+                            <div class="col-md-6">
+                                <div class="car-card card">
+                                    <img src="${primaryImage}" class="card-img-top" alt="${car.make} ${car.model}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${car.year} ${car.make} ${car.model}</h5>
+                                        <div class="price">${displayPrice}</div>
+                                        <div class="details">
+                                            <i class="fas fa-tachometer-alt me-1"></i>${car.mileage?.toLocaleString() || 0} km<br>
+                                            <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <a href="/car-details.html?id=${car.id}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="removeFavorite(${car.id})">
+                                                <i class="fas fa-trash me-1"></i>Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                return html;
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+                return '<div class="alert alert-danger">Failed to load favorites</div>';
+            }
+        }
+
+        async function removeFavorite(carId) {
+            try {
+                const response = await fetch(`/api/user/favorites/${carId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Removed from favorites');
+                    loadSection('favorites');
+                }
+            } catch (error) {
+                console.error('Error removing favorite:', error);
+                showToast('Error removing favorite', 'danger');
+            }
+        }
+
+        // ============= SAVED CARS SECTION =============
+        async function getSavedHTML() {
+            try {
+                const response = await fetch('/api/user/saved');
+                const saved = await response.json();
+                
+                let html = `
+                    <div class="content-header">
+                        <h4><i class="fas fa-bookmark me-2"></i>Saved for Later</h4>
+                    </div>
+                `;
+                
+                if (saved.length === 0) {
+                    html += `
+                        <div class="empty-state">
+                            <i class="fas fa-bookmark"></i>
+                            <h5>No Saved Cars</h5>
+                            <p>Save cars you're interested in by clicking the bookmark icon</p>
+                            <a href="/view" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Browse Cars
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    html += '<div class="row">';
+                    
+                    saved.forEach(car => {
+                        const primaryImage = car.images?.find(img => img.isPrimary)?.imageUrl || car.images?.[0]?.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image';
+                        const displayPrice = car.price || 'N/A';
+                        
+                        html += `
+                            <div class="col-md-6">
+                                <div class="car-card card">
+                                    <img src="${primaryImage}" class="card-img-top" alt="${car.make} ${car.model}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${car.year} ${car.make} ${car.model}</h5>
+                                        <div class="price">${displayPrice}</div>
+                                        <div class="details">
+                                            <i class="fas fa-tachometer-alt me-1"></i>${car.mileage?.toLocaleString() || 0} km<br>
+                                            <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <a href="/car-details.html?id=${car.id}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            <button class="btn btn-outline-warning btn-sm" onclick="removeSaved(${car.id})">
+                                                <i class="fas fa-trash me-1"></i>Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                return html;
+            } catch (error) {
+                console.error('Error loading saved cars:', error);
+                return '<div class="alert alert-danger">Failed to load saved cars</div>';
+            }
+        }
+
+        async function removeSaved(carId) {
+            try {
+                const response = await fetch(`/api/user/saved/${carId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Removed from saved');
+                    loadSection('saved');
+                }
+            } catch (error) {
+                console.error('Error removing saved car:', error);
+                showToast('Error removing saved car', 'danger');
+            }
+        }
+
+        // ============= PRICE ALERTS SECTION =============
+        async function getAlertsHTML() {
+            try {
+                const response = await fetch('/api/user/alerts');
+                const alerts = await response.json();
+                
+                let html = `
+                    <div class="content-header">
+                        <h4><i class="fas fa-bell me-2"></i>Price Alerts</h4>
+                    </div>
+                `;
+                
+                if (alerts.length === 0) {
+                    html += `
+                        <div class="empty-state">
+                            <i class="fas fa-bell"></i>
+                            <h5>No Price Alerts Set</h5>
+                            <p>Set price alerts on cars to get notified when prices drop</p>
+                            <a href="/view" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Browse Cars
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    alerts.forEach(alert => {
+                        const createdDate = new Date(alert.createdAt).toLocaleDateString();
+                        
+                        html += `
+                            <div class="alert-card ${alert.isActive ? 'active' : 'inactive'}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="alert-title">
+                                            ${alert.carYear || ''} ${alert.carMake} ${alert.carModel}
+                                        </div>
+                                        <div class="alert-details">
+                                            <i class="fas fa-tag me-1"></i>Current Price: ${alert.carPrice || 'N/A'}<br>
+                                            <i class="fas fa-map-marker-alt me-1"></i>${alert.carLocation || 'N/A'}<br>
+                                            <i class="fas fa-calendar me-1"></i>Set on ${createdDate}<br>
+                                            ${alert.similarCars ? '<span class="badge bg-info mt-2">Also alert on similar cars</span>' : ''}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="badge ${alert.isActive ? 'bg-success' : 'bg-secondary'}">
+                                            ${alert.isActive ? 'Active' : 'Inactive'}
+                                        </span>
+                                        ${alert.isActive ? `
+                                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deactivateAlert(${alert.id})">
+                                                <i class="fas fa-stop"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                return html;
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                return '<div class="alert alert-danger">Failed to load price alerts</div>';
+            }
+        }
+
+        async function deactivateAlert(alertId) {
+            try {
+                const response = await fetch(`/api/user/alerts/${alertId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Alert deactivated');
+                    loadSection('alerts');
+                }
+            } catch (error) {
+                console.error('Error deactivating alert:', error);
+                showToast('Error deactivating alert', 'danger');
+            }
+        }
+
+        // ============= RECENT ACTIVITY SECTION =============
+        async function getRecentActivityHTML() {
+            // This is a placeholder - you can implement this based on your tracking needs
+            return `
+                <div class="content-header">
+                    <h4><i class="fas fa-history me-2"></i>Recent Activity</h4>
+                </div>
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <h5>No Recent Activity</h5>
+                    <p>Your recent activity will appear here</p>
+                    <a href="/view" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Start Browsing
+                    </a>
+                </div>
+            `;
+        }
+
+        // ============= SETTINGS SECTION =============
+        function getSettingsHTML() {
+            return `
+                <div class="content-header">
+                    <h4><i class="fas fa-cog me-2"></i>Account Settings</h4>
+                </div>
+                
+                <div class="mb-5">
+                    <h5 class="mb-3">Security</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Password</h6>
+                                    <p class="text-muted mb-0">Last changed: Never</p>
+                                </div>
+                                <button class="btn btn-primary" onclick="openChangePasswordModal()">
+                                    <i class="fas fa-key me-2"></i>Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="danger-zone">
+                    <h6 class="mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h6>
+                    <p class="mb-3 text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                    <button class="btn btn-danger" onclick="openDeleteAccountModal()">
+                        <i class="fas fa-trash me-2"></i>Delete Account
+                    </button>
+                </div>
+            `;
+        }
+
+        // ============= PASSWORD MANAGEMENT =============
+        function openChangePasswordModal() {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+
+        function togglePasswordField(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('All fields are required', 'danger');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showToast('Password must be at least 8 characters long', 'danger');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/change-password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                
+                if (response.ok) {
+                    showToast('Password changed successfully');
+                    
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                    modal.hide();
+                    document.getElementById('changePasswordForm').reset();
+                } else {
+                    const data = await response.json();
+                    showToast(data.error || 'Failed to change password', 'danger');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showToast('Error changing password', 'danger');
+            }
+        }
+
+        // ============= ACCOUNT DELETION =============
+        function openDeleteAccountModal() {
+            const modal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+            modal.show();
+        }
+
+        async function deleteAccount() {
+            try {
+                const response = await fetch('/api/auth/account', {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Account deleted successfully');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showToast('Failed to delete account', 'danger');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                showToast('Error deleting account', 'danger');
+            }
+        }
+
+        // ============= UTILITIES =============
+        function showToast(message, type = 'success') {
+            let toastElement = document.getElementById('actionToast');
+            if (!toastElement) {
+                const toastContainer = document.createElement('div');
+                toastContainer.innerHTML = `
+                    <div id="actionToast" class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toastContainer.firstElementChild);
+                toastElement = document.getElementById('actionToast');
+            } else {
+                toastElement.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+                toastElement.classList.add(`bg-${type}`);
+                toastElement.querySelector('.toast-body').textContent = message;
+            }
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-car-luxury"></i> Exi Dealers</h5>
+                    <p>Your trusted partner for buying premium quality vehicles.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="view.html">Browse Cars</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Premium Brands</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Mercedes-Benz</a></li>
+                        <li><a href="#">BMW</a></li>
+                        <li><a href="#">Audi</a></li>
+                        <li><a href="#">Lexus</a></li>
+                        <li><a href="#">Land Rover</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Windhoek, Namibia</li>
+                        <li><i class="fas fa-phone me-2"></i> +264 (81) 267 5760</li>
+                        <li><i class="fas fa-envelope me-2"></i> sales@exidealers.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light" />
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <p>&copy; 2026 Exi Dealers. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

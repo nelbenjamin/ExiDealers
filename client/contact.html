@@ -159,8 +159,8 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container"> <!-- Added this container -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
         <a class="navbar-brand" href="index.html">
             <img src="logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
         </a>
@@ -171,11 +171,87 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/contact">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                <li class="nav-item dropdown" id="userDropdownContainer">
+                    <!-- User dropdown will be inserted here by JavaScript -->
+                </li>
             </ul>
         </div>
-    </div> <!-- Closing container -->
+    </div>
 </nav>
+
+<script>
+// Add this script to the bottom of each page (before closing body tag)
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadUserNavigation();
+});
+
+async function loadUserNavigation() {
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        const container = document.getElementById('userDropdownContainer');
+        
+        if (data.authenticated) {
+            container.innerHTML = `
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                    <span class="user-initials" style="width: 35px; height: 35px; background: #ffc107; color: #1a365d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 5px;">
+                        ${data.user.initials}
+                    </span>
+                    ${data.user.firstName}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                    <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                    <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            `;
+        } else {
+            container.innerHTML = `
+                <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Sign In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+            `;
+        }
+        
+        // Initialize Bootstrap dropdown
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+    } catch (error) {
+        console.error('Error loading navigation:', error);
+    }
+}
+
+async function logoutUser() {
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.reload();
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
+</script>
+
+<style>
+.user-initials {
+    width: 35px;
+    height: 35px;
+    background: #ffc107;
+    color: #1a365d;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: 5px;
+}
+</style>
 
     <!-- Page Header -->
     <header class="contact-header py-5">
@@ -403,7 +479,7 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
             <hr class="bg-light" />
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <p>&copy; 2025 Exi Dealers. All rights reserved.</p>
+                    <p>&copy; 2026 Exi Dealers. All rights reserved.</p>
                 </div>
             </div>
         </div>
@@ -467,81 +543,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     </script>
 
-<script>
-// Navigation script for all pages
-document.addEventListener('DOMContentLoaded', async function() {
-    await loadNavigation();
-});
-
-async function loadNavigation() {
-    try {
-        const response = await fetch('/api/auth/status');
-        const data = await response.json();
-        
-        const navbarContent = document.getElementById('navbarContent') || document.querySelector('.navbar-collapse');
-        
-        if (!navbarContent) return;
-        
-        if (data.authenticated) {
-            // User is logged in - show user dropdown
-            navbarContent.innerHTML = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i> ${data.user.name}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
-                            <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
-                            <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            `;
-        } else {
-            // User is not logged in - show login/register
-            navbarContent.innerHTML = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/login') ? 'active' : ''}" href="/login">Login</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/register') ? 'active' : ''}" href="/register">Register</a></li>
-                </ul>
-            `;
-        }
-        
-        // Initialize Bootstrap dropdown
-        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-        dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl);
-        });
-        
-    } catch (error) {
-        console.error('Error loading navigation:', error);
-    }
-}
-
-async function logoutUser() {
-    try {
-        const response = await fetch('/api/auth/logout', {
-            method: 'POST'
-        });
-        
-        if (response.ok) {
-            window.location.reload();
-        }
-    } catch (error) {
-        console.error('Logout error:', error);
-    }
-}
-</script>
 
     <script src="script.js"></script>
 </body>
