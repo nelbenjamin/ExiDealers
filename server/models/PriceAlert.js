@@ -7,6 +7,14 @@ const PriceAlert = sequelize.define('PriceAlert', {
     primaryKey: true,
     autoIncrement: true
   },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'users',
+      key: 'id'
+    }
+  },
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -17,17 +25,14 @@ const PriceAlert = sequelize.define('PriceAlert', {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isEmail: true
-    }
+    allowNull: false
   },
   phone: {
     type: DataTypes.STRING,
     allowNull: false
   },
   carId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   carMake: {
@@ -42,9 +47,9 @@ const PriceAlert = sequelize.define('PriceAlert', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  carPrice: {  // Changed from currentPrice to carPrice
-    type: DataTypes.STRING, 
-    allowNull: false
+  carPrice: {
+    type: DataTypes.STRING,
+    allowNull: true
   },
   carMileage: {
     type: DataTypes.INTEGER,

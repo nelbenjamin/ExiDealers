@@ -9,102 +9,14 @@ const Newsletter = require('./Newsletter');
 const Contact = require('./Contact');
 const CarEnquiry = require('./CarEnquiry');
 
-// IMPORTANT: Check if User model exists, if not we'll create it
-let User, UserFavorite, UserSavedCar;
+// IMPORTANT: Import user models directly (don't use try/catch - we want them to exist)
+const User = require('./User');
+const UserFavorite = require('./UserFavorite');
+const UserSaved = require('./UserSaved'); // Note: I'm using UserSaved (not UserSavedCar)
 
-try {
-  User = require('./User');
-  console.log('✅ User model loaded successfully');
-} catch (error) {
-  console.log('⚠️ User model not found, creating placeholder...');
-  // Create a simple User model for now
-  const { DataTypes } = require('sequelize');
-  User = sequelize.define('User', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true
-    }
-  }, {
-    tableName: 'users',
-    timestamps: true
-  });
-}
+// Define all associations in one place - CLEAN AND ORGANIZED
 
-try {
-  UserFavorite = require('./UserFavorite');
-  console.log('✅ UserFavorite model loaded successfully');
-} catch (error) {
-  console.log('⚠️ UserFavorite model not found, creating placeholder...');
-  const { DataTypes } = require('sequelize');
-  UserFavorite = sequelize.define('UserFavorite', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    carId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
-  }, {
-    tableName: 'user_favorites',
-    timestamps: true
-  });
-}
-
-try {
-  UserSavedCar = require('./UserSavedCar');
-  console.log('✅ UserSavedCar model loaded successfully');
-} catch (error) {
-  console.log('⚠️ UserSavedCar model not found, creating placeholder...');
-  const { DataTypes } = require('sequelize');
-  UserSavedCar = sequelize.define('UserSavedCar', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    carId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
-  }, {
-    tableName: 'user_saved_cars',
-    timestamps: true
-  });
-}
-
-// Define associations for Car
+// ============= CAR ASSOCIATIONS =============
 Car.hasMany(CarImage, { 
   foreignKey: 'carId', 
   as: 'images',
@@ -115,54 +27,72 @@ CarImage.belongsTo(Car, {
   as: 'car'
 });
 
-// Define associations for User (only if models exist)
-if (User && UserFavorite) {
-  User.hasMany(UserFavorite, {
-    foreignKey: 'userId',
-    as: 'favorites',
-    onDelete: 'CASCADE'
-  });
-  UserFavorite.belongsTo(User, {
-    foreignKey: 'userId',
-    as: 'user'
-  });
-  UserFavorite.belongsTo(Car, {
-    foreignKey: 'carId',
-    as: 'car'
-  });
-}
+// ============= USER ASSOCIATIONS =============
 
-if (User && UserSavedCar) {
-  User.hasMany(UserSavedCar, {
-    foreignKey: 'userId',
-    as: 'savedCars',
-    onDelete: 'CASCADE'
-  });
-  UserSavedCar.belongsTo(User, {
-    foreignKey: 'userId',
-    as: 'user'
-  });
-  UserSavedCar.belongsTo(Car, {
-    foreignKey: 'carId',
-    as: 'car'
-  });
-}
+// User -> Favorites (One-to-Many)
+User.hasMany(UserFavorite, {
+  foreignKey: 'userId',
+  as: 'favorites',
+  onDelete: 'CASCADE'
+});
+UserFavorite.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
 
-if (Car && UserFavorite) {
-  Car.hasMany(UserFavorite, {
-    foreignKey: 'carId',
-    as: 'favoritedBy'
-  });
-}
+// User -> Saved Cars (One-to-Many)
+User.hasMany(UserSaved, {
+  foreignKey: 'userId',
+  as: 'savedCars',
+  onDelete: 'CASCADE'
+});
+UserSaved.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
 
-if (Car && UserSavedCar) {
-  Car.hasMany(UserSavedCar, {
-    foreignKey: 'carId',
-    as: 'savedBy'
-  });
-}
+// User -> Price Alerts (One-to-Many)
+User.hasMany(PriceAlert, {
+  foreignKey: 'userId',
+  as: 'priceAlerts',
+  onDelete: 'SET NULL'
+});
+PriceAlert.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
 
-// SINGLE sync database function - NO DUPLICATES
+// ============= CAR FAVORITE/SAVED ASSOCIATIONS =============
+
+// Car -> Favorites (One-to-Many)
+Car.hasMany(UserFavorite, {
+  foreignKey: 'carId',
+  as: 'favoritedBy',
+  onDelete: 'CASCADE'
+});
+UserFavorite.belongsTo(Car, {
+  foreignKey: 'carId',
+  as: 'car'
+});
+
+// Car -> Saved (One-to-Many)
+Car.hasMany(UserSaved, {
+  foreignKey: 'carId',
+  as: 'savedBy',
+  onDelete: 'CASCADE'
+});
+UserSaved.belongsTo(Car, {
+  foreignKey: 'carId',
+  as: 'car'
+});
+
+// ============= PRICE ALERT ASSOCIATIONS =============
+PriceAlert.belongsTo(Car, {
+  foreignKey: 'carId',
+  as: 'car'
+});
+
+// ============= SYNC DATABASE FUNCTION =============
 async function syncDatabase() {
   try {
     await sequelize.authenticate();
@@ -171,6 +101,11 @@ async function syncDatabase() {
     // Use { alter: true } to add new columns to existing tables
     await sequelize.sync({ alter: true });
     console.log('✅ All models were synchronized successfully. New columns added.');
+    
+    // Log all synced tables
+    const [results] = await sequelize.query('SHOW TABLES');
+    console.log('📊 Active tables:', results.map(r => Object.values(r)[0]).join(', '));
+    
   } catch (error) {
     console.error('❌ Unable to sync database:', error);
     throw error;
@@ -188,5 +123,5 @@ module.exports = {
   CarEnquiry,
   User,
   UserFavorite,
-  UserSavedCar
+  UserSaved
 };

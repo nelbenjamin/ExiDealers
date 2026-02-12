@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
 
 
 // Remove CSP headers that Railway adds
@@ -155,6 +156,34 @@ app.get('/contact', (req, res) => {
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+app.use(cookieParser());
+
+// Add auth routes - add this with your other route declarations
+app.use('/api/auth', require('./routes/auth').router);
+app.use('/api/user/favorites', require('./routes/userFavorites'));
+app.use('/api/user/saved', require('./routes/userSaved'));
+app.use('/api/user/alerts', require('./routes/userAlerts'));
+
+// Add route for profile page
+app.get('/profile', (req, res) => {
+    const profilePath = path.join(baseDir, 'client', 'profile.html');
+    if (fs.existsSync(profilePath)) {
+        res.sendFile(profilePath);
+    } else {
+        res.status(404).send('Profile page not found');
+    }
+});
+
+// Add route for register page
+app.get('/register', (req, res) => {
+    const registerPath = path.join(baseDir, 'client', 'register.html');
+    if (fs.existsSync(registerPath)) {
+        res.sendFile(registerPath);
+    } else {
+        res.status(404).send('Register page not found');
+    }
 });
 
 // 404 handler
