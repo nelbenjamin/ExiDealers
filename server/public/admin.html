@@ -1,0 +1,2389 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard | Exi Dealers</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="styles.css" rel="stylesheet" />
+    <style>
+        /* Professional Admin Dashboard Styles */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --dark-blue: #1a237e; /* Added dark blue color */
+        }
+
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9)), 
+                        url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Enhanced Navigation */
+        .navbar-admin {
+            background: var(--primary-gradient) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand i {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        /* Main Content Area */
+        #adminContent {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats Cards with Glass Morphism */
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--dark-blue); /* Changed to dark blue */
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stats-card.cars::before { background: var(--dark-blue); } /* Changed to dark blue */
+        .stats-card.messages::before { background: var(--dark-blue); } /* Changed to dark blue */
+        .stats-card.subscribers::before { background: var(--dark-blue); } /* Changed to dark blue */
+        .stats-card.alerts::before { background: var(--dark-blue); } /* Changed to dark blue */
+        .stats-card.enquiries::before { background: var(--dark-blue); } /* Changed to dark blue */
+
+        .stats-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .stats-card.messages .stats-number { background: var(--success-gradient); -webkit-background-clip: text; }
+        .stats-card.subscribers .stats-number { background: var(--warning-gradient); -webkit-background-clip: text; }
+        .stats-card.alerts .stats-number { background: var(--info-gradient); -webkit-background-clip: text; }
+        .stats-card.enquiries .stats-number { background: var(--dark-gradient); -webkit-background-clip: text; }
+
+        .stats-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem;
+            opacity: 0.2;
+            color: #667eea;
+        }
+
+        /* Enhanced Navigation Pills */
+        .nav-pills {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 10px;
+            margin: 5px;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-pills .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-pills .nav-link:hover {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .nav-pills .nav-link:hover::before {
+            left: 0;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .badge-counter {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .dashboard-card .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 20px;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            position: relative;
+        }
+
+        .dashboard-card .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Message Cards */
+        .message-card, .car-card, .subscriber-card, .alert-card, .enquiry-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .message-card:hover, .car-card:hover, .subscriber-card:hover, .alert-card:hover, .enquiry-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 10px 20px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Form Sections */
+        #sellCarSection, #editCarSection {
+            background: white;
+            border-radius: 15px;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header.bg-primary {
+            background: var(--primary-gradient) !important;
+        }
+
+        .card-header.bg-warning {
+            background: var(--warning-gradient) !important;
+        }
+
+        /* Image Preview Styles */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .image-preview-item:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .image-preview-item.active {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Loading Spinners */
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+            border-width: 0.2em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #adminContent {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .stats-card {
+                padding: 20px;
+            }
+            
+            .stats-number {
+                font-size: 2.2rem;
+            }
+            
+            .nav-pills .nav-link {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a45a2);
+        }
+
+        /* Animation for new items */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-card, .car-card, .subscriber-card, .alert-card, .enquiry-card {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, #8e9eab, #eef2f3);
+            color: #666;
+        }
+
+        /* Hover effects for interactive elements */
+        .interactive-hover {
+            transition: all 0.3s ease;
+        }
+
+        .interactive-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Add these styles to your existing CSS */
+.image-preview-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.image-preview-item.active {
+    border: 3px solid #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.primary-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #007bff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.image-preview-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-preview-item:hover .image-preview-overlay {
+    opacity: 1;
+}
+
+/* Compression progress styles */
+#compressionProgress {
+    transition: all 0.3s ease;
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+}
+
+/* Format buttons */
+.description-format-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.format-btn {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.format-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: #667eea;
+}
+
+.format-btn:hover:not(.active) {
+    background: #f8f9fa;
+}
+
+.navbar-brand img {
+    filter: brightness(0) invert(1);
+}
+</style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Enhanced Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="/logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
+            </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                    </ul>
+                    <!-- Buttons outside ul -->
+                    <div class="d-flex ms-3">
+                        <button id="showSellFormBtn" class="btn btn-primary me-2 admin-nav-btn">Add New Car</button>
+                        <button id="showDashboardBtn" class="btn btn-secondary admin-nav-btn">Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container-fluid py-5" style="margin-top: 80px;">
+            <!-- Authentication Error -->
+            <div id="authError" class="alert alert-danger text-center" style="display: none;">
+                <h4>Authentication Failed</h4>
+                <p id="errorMessage"></p>
+                <button onclick="window.location.href='/admin'" class="btn btn-secondary">
+                    Return to Login
+                </button>
+            </div>
+
+            <div id="adminContent">
+                <div class="container-fluid">
+                    <h1 class="mb-4">Admin Dashboard</h1>
+                    
+                    <!-- Enhanced Stats Overview -->
+                    <div class="row mb-5">
+                        <div class="col-md-3">
+                            <div class="stats-card cars interactive-hover">
+                                <i class="fas fa-car stats-icon"></i>
+                                <div class="stats-number" id="totalCars">0</div>
+                                <div class="stats-label">Total Cars</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card messages interactive-hover">
+                                <i class="fas fa-envelope stats-icon"></i>
+                                <div class="stats-number" id="totalMessages">0</div>
+                                <div class="stats-label">Messages</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card subscribers interactive-hover">
+                                <i class="fas fa-users stats-icon"></i>
+                                <div class="stats-number" id="totalSubscribers">0</div>
+                                <div class="stats-label">Subscribers</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card alerts interactive-hover">
+                                <i class="fas fa-bell stats-icon"></i>
+                                <div class="stats-number" id="totalAlerts">0</div>
+                                <div class="stats-label">Price Alerts</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card enquiries interactive-hover">
+                                <i class="fas fa-question-circle stats-icon"></i>
+                                <div class="stats-number" id="totalEnquiries">0</div>
+                                <div class="stats-label">Car Enquiries</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Dashboard Navigation -->
+                    <ul class="nav nav-pills mb-4" id="dashboardTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="messages-tab" data-bs-toggle="pill" data-bs-target="#messages" type="button" role="tab">
+                                <i class="fas fa-envelope me-2"></i> Messages
+                                <span class="badge-counter" id="messagesCount">0</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cars-tab" data-bs-toggle="pill" data-bs-target="#cars" type="button" role="tab">
+                                <i class="fas fa-car me-2"></i> Cars
+                                <span class="badge-counter" id="carsCount">0</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="subscribers-tab" data-bs-toggle="pill" data-bs-target="#subscribers" type="button" role="tab">
+                                <i class="fas fa-users me-2"></i> Subscribers
+                                <span class="badge-counter" id="subscribersCount">0</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="alerts-tab" data-bs-toggle="pill" data-bs-target="#alerts" type="button" role="tab">
+                                <i class="fas fa-bell me-2"></i> Price Alerts
+                                <span class="badge-counter" id="alertsCount">0</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="enquiries-tab" data-bs-toggle="pill" data-bs-target="#enquiries" type="button" role="tab">
+                                <i class="fas fa-question-circle me-2"></i> Car Enquiries
+                                <span class="badge-counter" id="enquiriesCount">0</span>
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="dashboardTabContent">
+                        <!-- Messages Tab -->
+                        <div class="tab-pane fade show active" id="messages" role="tabpanel">
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Contact Messages</h5>
+                                    <span class="badge bg-light text-primary" id="messagesBadge">0 messages</span>
+                                </div>
+                                <div class="card-body" id="messagesContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted">Loading messages...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cars Tab -->
+                        <div class="tab-pane fade" id="cars" role="tabpanel">
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-car me-2"></i>Car Listings</h5>
+                                    <span class="badge bg-light text-primary" id="carsBadge">0 cars</span>
+                                </div>
+                                <div class="card-body" id="carsContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted">Loading cars...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Alerts Tab -->
+                        <div class="tab-pane fade" id="alerts" role="tabpanel">
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Price Alerts</h5>
+                                    <span class="badge bg-light text-primary" id="alertsBadge">0 alerts</span>
+                                </div>
+                                <div class="card-body" id="alertsContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted">Loading price alerts...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subscribers Tab -->
+                        <div class="tab-pane fade" id="subscribers" role="tabpanel">
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Newsletter Subscribers</h5>
+                                    <span class="badge bg-light text-primary" id="subscribersBadge">0 subscribers</span>
+                                </div>
+                                <div class="card-body" id="subscribersContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted">Loading subscribers...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Car Enquiries Tab -->
+                        <div class="tab-pane fade" id="enquiries" role="tabpanel">
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Car Enquiries</h5>
+                                    <span class="badge bg-light text-primary" id="enquiriesBadge">0 enquiries</span>
+                                </div>
+                                <div class="card-body" id="enquiriesContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted">Loading car enquiries...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sell Car Form Section (hidden by default) -->
+        <section id="sellCarSection" class="py-5" style="display:none;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="mb-0">Car Information</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="carSellingForm" enctype="multipart/form-data">
+                                    <!-- Basic Information -->
+                                    <h5 class="mb-3">Basic Information</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="make" class="form-label">Make <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                                <input type="text" class="form-control" id="make" name="make" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="model" class="form-label">Model <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car-side"></i></span>
+                                                <input type="text" class="form-control" id="model" name="model" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="year" class="form-label">Year <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                                <input type="number" class="form-control" id="year" name="year" min="1980" max="2025" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="mileage" class="form-label">Mileage (km) <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
+                                                <input type="text" class="form-control" id="mileage" name="mileage" placeholder="e.g., 120000 or 120 000 km" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="condition" class="form-label">Condition <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-star"></i></span>
+                                                <select class="form-select" id="condition" name="condition" required>
+                                                    <option value="" selected disabled>Select Condition</option>
+                                                    <option value="excellent">Excellent</option>
+                                                    <option value="good">Good</option>
+                                                    <option value="fair">Fair</option>
+                                                    <option value="poor">Poor</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vehicle Details -->
+                                    <h5 class="mb-3 mt-4">Vehicle Details</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="bodyType" class="form-label">Body Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                                <select class="form-select" id="bodyType" name="bodyType">
+                                                    <option value="">Select Body Type</option>
+                                                    <option value="SUV">SUV</option>
+                                                    <option value="Sedan">Sedan</option>
+                                                    <option value="Hatchback">Hatchback</option>
+                                                    <option value="Coupe">Coupe</option>
+                                                    <option value="Convertible">Convertible</option>
+                                                    <option value="Truck">Truck</option>
+                                                    <option value="Van">Van</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="transmission" class="form-label">Transmission</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                                                <select class="form-select" id="transmission" name="transmission">
+                                                    <option value="">Select Transmission</option>
+                                                    <option value="Automatic">Automatic</option>
+                                                    <option value="Manual">Manual</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="fuelType" class="form-label">Fuel Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
+                                                <select class="form-select" id="fuelType" name="fuelType">
+                                                    <option value="">Select Fuel Type</option>
+                                                    <option value="Petrol">Petrol</option>
+                                                    <option value="Diesel">Diesel</option>
+                                                    <option value="Electric">Electric</option>
+                                                    <option value="Hybrid">Hybrid</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="driveType" class="form-label">Drive Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-tire"></i></span>
+                                                <select class="form-select" id="driveType" name="driveType">
+                                                    <option value="">Select Drive Type</option>
+                                                    <option value="4x2">4x2</option>
+                                                    <option value="4x4">4x4</option>
+                                                    <option value="AWD">AWD</option>
+                                                    <option value="FWD">FWD</option>
+                                                    <option value="RWD">RWD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                <input type="text" class="form-control" id="location" name="location" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="price" class="form-label">Price (N$) <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                <input type="text" class="form-control" id="price" name="price" placeholder="e.g., N$50 000 or Price on request" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                                        <div class="description-format-buttons">
+                                            <button type="button" class="format-btn active" data-format="paragraph">
+                                                <i class="fas fa-paragraph"></i> Paragraph
+                                            </button>
+                                            <button type="button" class="format-btn" data-format="bullets">
+                                                <i class="fas fa-list"></i> Bullet Points
+                                            </button>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                                            <textarea class="form-control" id="description" name="description" rows="6" placeholder="Enter description as paragraph or bullet points (one per line)" required></textarea>
+                                        </div>
+                                        <div class="form-text">
+                                            For bullet points: Enter each feature on a new line. They will be displayed as a list on the view page.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="carImages" class="form-label">Upload Car Images <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-images"></i></span>
+                                            <input class="form-control" type="file" id="carImages" name="carImages" accept="image/*" multiple required />
+                                        </div>
+                                        <div class="form-text">Upload multiple photos of your car (max 40 images). Images will be automatically compressed.</div>
+                                        
+                                        <!-- Compression Progress -->
+                                        <div id="compressionProgress" class="mt-2" style="display: none;">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">
+                                                    Compressing images: <span id="compressionPercent">0%</span>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted" id="compressionStatus">Preparing...</small>
+                                        </div>
+                                        
+                                        <!-- Image Previews -->
+                                        <div class="image-preview-container mt-2" id="imagePreviews"></div>
+                                        <input type="hidden" id="primaryImageIndex" name="primaryImageIndex" value="0">
+                                    </div>
+
+                                    <!-- Seller Information -->
+                                    <h4 class="mt-5 mb-3">Seller Information</h4>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="sellerName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <input type="text" class="form-control" id="sellerName" name="sellerName" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sellerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                                <input type="email" class="form-control" id="sellerEmail" name="sellerEmail" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label for="sellerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                                <input type="tel" class="form-control" id="sellerPhone" name="sellerPhone" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="preferredContact" class="form-label">Preferred Contact Method</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-comments"></i></span>
+                                                <select class="form-select" id="preferredContact" name="preferredContact">
+                                                    <option value="email">Email</option>
+                                                    <option value="phone">Phone</option>
+                                                    <option value="text">Text Message</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">Submit Your Listing</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edit Car Form Section (hidden by default) -->
+        <section id="editCarSection" class="py-5" style="display:none;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card shadow">
+                            <div class="card-header bg-warning text-dark">
+                                <div class="form-header">
+                                    <h3 class="mb-0">Edit Car Information</h3>
+                                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="carEditForm" enctype="multipart/form-data">
+                                    <input type="hidden" id="editCarId" name="id">
+                                    
+                                    <!-- Basic Information -->
+                                    <h5 class="mb-3">Basic Information</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="editMake" class="form-label">Make <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                                <input type="text" class="form-control" id="editMake" name="make" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="editModel" class="form-label">Model <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car-side"></i></span>
+                                                <input type="text" class="form-control" id="editModel" name="model" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="editYear" class="form-label">Year <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                                <input type="number" class="form-control" id="editYear" name="year" min="1980" max="2025" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="editMileage" class="form-label">Mileage (km) <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
+                                                <input type="text" class="form-control" id="editMileage" name="mileage" placeholder="e.g., 120000 or 120 000 km" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="editCondition" class="form-label">Condition <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-star"></i></span>
+                                                <select class="form-select" id="editCondition" name="condition" required>
+                                                    <option value="" selected disabled>Select Condition</option>
+                                                    <option value="excellent">Excellent</option>
+                                                    <option value="good">Good</option>
+                                                    <option value="fair">Fair</option>
+                                                    <option value="poor">Poor</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vehicle Details -->
+                                    <h5 class="mb-3 mt-4">Vehicle Details</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="editBodyType" class="form-label">Body Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                                <select class="form-select" id="editBodyType" name="bodyType">
+                                                    <option value="">Select Body Type</option>
+                                                    <option value="SUV">SUV</option>
+                                                    <option value="Sedan">Sedan</option>
+                                                    <option value="Hatchback">Hatchback</option>
+                                                    <option value="Coupe">Coupe</option>
+                                                    <option value="Convertible">Convertible</option>
+                                                    <option value="Truck">Truck</option>
+                                                    <option value="Van">Van</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="editTransmission" class="form-label">Transmission</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                                                <select class="form-select" id="editTransmission" name="transmission">
+                                                    <option value="">Select Transmission</option>
+                                                    <option value="Automatic">Automatic</option>
+                                                    <option value="Manual">Manual</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="editFuelType" class="form-label">Fuel Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
+                                                <select class="form-select" id="editFuelType" name="fuelType">
+                                                    <option value="">Select Fuel Type</option>
+                                                    <option value="Petrol">Petrol</option>
+                                                    <option value="Diesel">Diesel</option>
+                                                    <option value="Electric">Electric</option>
+                                                    <option value="Hybrid">Hybrid</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="editDriveType" class="form-label">Drive Type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-tire"></i></span>
+                                                <select class="form-select" id="editDriveType" name="driveType">
+                                                    <option value="">Select Drive Type</option>
+                                                    <option value="4x2">4x2</option>
+                                                    <option value="4x4">4x4</option>
+                                                    <option value="AWD">AWD</option>
+                                                    <option value="FWD">FWD</option>
+                                                    <option value="RWD">RWD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="editLocation" class="form-label">Location <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                <input type="text" class="form-control" id="editLocation" name="location" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="editPrice" class="form-label">Price (N$) <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                <input type="text" class="form-control" id="editPrice" name="price" placeholder="e.g., N$50 000 or Price on request" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="editDescription" class="form-label">Description <span class="text-danger">*</span></label>
+                                        <div class="description-format-buttons">
+                                            <button type="button" class="format-btn active" data-format="paragraph">
+                                                <i class="fas fa-paragraph"></i> Paragraph
+                                            </button>
+                                            <button type="button" class="format-btn" data-format="bullets">
+                                                <i class="fas fa-list"></i> Bullet Points
+                                            </button>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                                            <textarea class="form-control" id="editDescription" name="description" rows="6" placeholder="Enter description as paragraph or bullet points (one per line)" required></textarea>
+                                        </div>
+                                        <div class="form-text">
+                                            For bullet points: Enter each feature on a new line. They will be displayed as a list on the view page.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="editCarImages" class="form-label">Update Car Images (Optional)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-images"></i></span>
+                                            <input class="form-control" type="file" id="editCarImages" name="carImages" accept="image/*" multiple />
+                                        </div>
+                                        <div class="form-text">Upload new photos to replace existing ones (max 40 images, 5MB each)</div>
+                                        
+                                        <!-- Existing Images -->
+                                        <div class="mt-3">
+                                            <h6>Current Images</h6>
+                                            <div class="image-preview-container" id="editExistingImages"></div>
+                                        </div>
+                                        
+                                        <!-- New Image Previews -->
+                                        <div class="image-preview-container" id="editImagePreviews"></div>
+                                        <input type="hidden" id="editPrimaryImageIndex" name="primaryImageIndex" value="0">
+                                    </div>
+
+                                    <!-- Seller Information -->
+                                    <h4 class="mt-5 mb-3">Seller Information</h4>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="editSellerName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <input type="text" class="form-control" id="editSellerName" name="sellerName" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="editSellerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                                <input type="email" class="form-control" id="editSellerEmail" name="sellerEmail" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label for="editSellerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                                <input type="tel" class="form-control" id="editSellerPhone" name="sellerPhone" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="editPreferredContact" class="form-label">Preferred Contact Method</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-comments"></i></span>
+                                                <select class="form-select" id="editPreferredContact" name="preferredContact">
+                                                    <option value="email">Email</option>
+                                                    <option value="phone">Phone</option>
+                                                    <option value="text">Text Message</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-warning btn-lg">Update Car Listing</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Check authentication on page load - FIXED: Redirect to login if no token
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get('token');
+        const storedToken = sessionStorage.getItem('adminToken');
+
+        // If no token in URL or session storage, redirect to login
+        if (!urlToken && !storedToken) {
+            window.location.href = '/admin';
+            return;
+        }
+
+        // Use token from URL or session storage
+        let adminToken = urlToken || storedToken;
+        
+        // If token is in URL, store it and remove from URL
+        if (urlToken) {
+            sessionStorage.setItem('adminToken', urlToken);
+            // Clean URL without token for security
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Initialize the dashboard with the token
+        initializeDashboard(adminToken);
+        
+        // Initialize image upload functionality
+        initImageUpload();
+        initDescriptionFormatting();
+
+        // Add event listeners for navigation buttons
+        document.getElementById('showSellFormBtn').addEventListener('click', function() {
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('sellCarSection').style.display = 'block';
+            document.getElementById('editCarSection').style.display = 'none';
+        });
+
+        document.getElementById('showDashboardBtn').addEventListener('click', function() {
+            document.getElementById('sellCarSection').style.display = 'none';
+            document.getElementById('editCarSection').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+        });
+    });
+
+    let adminToken;
+    let allCars = [];
+    let currentEditCarImages = [];
+    let compressedImages = []; // Store compressed images for form submission
+
+    // ==================== DASHBOARD FUNCTIONS ====================
+
+    async function initializeDashboard(token) {
+        adminToken = token;
+        await verifyToken();
+    }
+
+    const authError = document.getElementById('authError');
+    const adminContent = document.getElementById('adminContent');
+    const errorMessage = document.getElementById('errorMessage');
+    const sellCarSection = document.getElementById('sellCarSection');
+    const editCarSection = document.getElementById('editCarSection');
+
+    async function verifyToken() {
+        try {
+            const testRes = await fetch('/api/verify-token', {
+                headers: { 'admin-token': adminToken }
+            });
+
+            const data = await testRes.json();
+
+            if (!testRes.ok) {
+                throw new Error(data.error || 'Invalid token');
+            }
+
+            loadData();
+        } catch (error) {
+            console.error('Authentication error:', error);
+            showError(error.message);
+        }
+    }
+
+    function showError(message) {
+        authError.style.display = 'block';
+        adminContent.style.display = 'none';
+        sellCarSection.style.display = 'none';
+        editCarSection.style.display = 'none';
+        errorMessage.textContent = message;
+        
+        // Clear token on error
+        sessionStorage.removeItem('adminToken');
+    }
+
+    // Helper function for authenticated requests
+    function makeAuthenticatedRequest(url, options = {}) {
+        if (!options.headers) {
+            options.headers = {};
+        }
+        options.headers['admin-token'] = adminToken;
+        return fetch(url, options);
+    }
+
+    async function loadData() {
+        try {
+            const [statsRes, messagesRes, carsRes, subscribersRes, alertsRes, enquiriesRes] = await Promise.all([
+                makeAuthenticatedRequest('/api/dashboard/stats'),
+                makeAuthenticatedRequest('/api/dashboard/messages'),
+                makeAuthenticatedRequest('/api/dashboard/cars'),
+                makeAuthenticatedRequest('/api/dashboard/newsletter'),
+                makeAuthenticatedRequest('/api/dashboard/price-alerts'),
+                makeAuthenticatedRequest('/api/dashboard/car-enquiries')
+            ]);
+
+            // Check if responses are OK
+            if (!statsRes.ok) throw new Error('Failed to fetch stats');
+            if (!messagesRes.ok) throw new Error('Failed to fetch messages');
+            if (!carsRes.ok) throw new Error('Failed to fetch cars');
+            
+            const stats = await statsRes.json();
+            const messages = await messagesRes.json();
+            allCars = await carsRes.json();
+            const subscribers = subscribersRes.ok ? await subscribersRes.json() : [];
+            const alerts = alertsRes.ok ? await alertsRes.json() : [];
+            const enquiries = enquiriesRes.ok ? await enquiriesRes.json() : [];
+
+            // Update stats
+            document.getElementById('totalCars').textContent = stats.totalCars || allCars.length;
+            document.getElementById('totalMessages').textContent = stats.totalMessages || messages.length;
+            document.getElementById('totalSubscribers').textContent = stats.totalNewsletterSubscribers || subscribers.length;
+            document.getElementById('totalAlerts').textContent = stats.totalPriceAlerts || alerts.length;
+            document.getElementById('totalEnquiries').textContent = stats.totalCarEnquiries || enquiries.length;
+            
+            // Update badge counters
+            document.getElementById('messagesCount').textContent = messages.length;
+            document.getElementById('carsCount').textContent = allCars.length;
+            document.getElementById('subscribersCount').textContent = subscribers.length;
+            document.getElementById('alertsCount').textContent = alerts.length;
+            document.getElementById('enquiriesCount').textContent = enquiries.length;
+            
+            document.getElementById('messagesBadge').textContent = `${messages.length} messages`;
+            document.getElementById('carsBadge').textContent = `${allCars.length} cars`;
+            document.getElementById('subscribersBadge').textContent = `${subscribers.length} subscribers`;
+            document.getElementById('alertsBadge').textContent = `${alerts.length} alerts`;
+            document.getElementById('enquiriesBadge').textContent = `${enquiries.length} enquiries`;
+
+            // Render all sections
+            renderMessages(messages);
+            renderCars(allCars);
+            renderSubscribers(subscribers);
+            renderAlerts(alerts);
+            renderCarEnquiries(enquiries);
+            
+        } catch (error) {
+            console.error('Load error:', error);
+            showError(error.message);
+        }
+    }
+
+    // Render Messages
+    function renderMessages(messages) {
+        let html = '';
+        if (messages.length === 0) {
+            html = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-envelope fa-3x mb-3"></i>
+                        <h5>No Messages</h5>
+                        <p>No contact messages received yet.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            messages.forEach(msg => {
+                const messagePreview = msg.message.length > 100 ? 
+                    msg.message.substring(0, 100) + '...' : msg.message;
+                const date = new Date(msg.createdAt || msg.created_at).toLocaleDateString();
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card message-card h-100">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <small class="text-truncate">${msg.subject || 'No Subject'}</small>
+                                <button onclick="deleteMessage('${msg.id}')" class="btn btn-sm btn-light btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">${messagePreview}</p>
+                                <div class="message-meta">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>${msg.name}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-envelope me-1"></i>${msg.email}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>${date}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <button onclick="replyToMessage('${msg.email}')" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-reply me-1"></i> Reply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('messagesContainer').innerHTML = `
+            <div class="row">
+                ${html}
+            </div>
+        `;
+    }
+
+    // Render Cars - FIXED PRICE DISPLAY
+    function renderCars(cars) {
+        let html = '';
+        if (cars.length === 0) {
+            html = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-car fa-3x mb-3"></i>
+                        <h5>No Cars Listed</h5>
+                        <p>No cars available in inventory.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            cars.forEach(car => {
+                const primaryImage = car.images && car.images.length > 0 ? 
+                    car.images.find(img => img.isPrimary) || car.images[0] : null;
+                const imageUrl = primaryImage ? primaryImage.imageUrl : 'https://via.placeholder.com/300x200?text=No+Image';
+                
+                // FIXED: Handle both number and text prices
+                let priceDisplay = car.price;
+                    if (typeof car.price === 'number') {
+                        priceDisplay = 'N$' + car.price.toLocaleString();
+                    }
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card car-card h-100">
+                            <img src="${imageUrl}" class="card-img-top" alt="${car.make} ${car.model}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">${car.year} ${car.make} ${car.model}</h6>
+                                <p class="card-text">
+                                    <strong>${priceDisplay}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tachometer-alt me-1"></i>${car.mileage} km
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>${car.location}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="btn-group w-100" role="group">
+                                    <button onclick="editCar('${car.id}')" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button onclick="deleteCar('${car.id}')" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('carsContainer').innerHTML = `
+            <div class="row">
+                ${html}
+            </div>
+        `;
+    }
+
+    // Render Subscribers
+    function renderSubscribers(subscribers) {
+        let html = '';
+        if (subscribers.length === 0) {
+            html = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h5>No Subscribers</h5>
+                        <p>No newsletter subscribers yet.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            subscribers.forEach(sub => {
+                const date = new Date(sub.createdAt || sub.subscribed_at).toLocaleDateString();
+                
+                html += `
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card subscriber-card h-100">
+                            <div class="card-body text-center">
+                                <div class="subscriber-avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h6 class="card-title text-truncate">${sub.email}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Subscribed: ${date}
+                                </small>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <button onclick="deleteSubscriber('${sub.id}')" class="btn btn-outline-danger btn-sm w-100">
+                                    <i class="fas fa-trash me-1"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('subscribersContainer').innerHTML = `
+            <div class="row">
+                ${html}
+            </div>
+        `;
+    }
+
+    // Render Price Alerts
+    function renderAlerts(alerts) {
+        let html = '';
+        if (alerts.length === 0) {
+            html = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-bell fa-3x mb-3"></i>
+                        <h5>No Price Alerts</h5>
+                        <p>No price alerts set by users.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            alerts.forEach(alert => {
+                const statusClass = alert.isActive ? 'bg-success' : 'bg-secondary';
+                const statusText = alert.isActive ? 'Active' : 'Inactive';
+                const date = new Date(alert.createdAt).toLocaleDateString();
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card alert-card h-100">
+                            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                                <small class="fw-bold">${alert.carMake} ${alert.carModel}</small>
+                                <span class="badge ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">${alert.firstName} ${alert.lastName}</h6>
+                                <p class="card-text">
+                                    <small>
+                                        <i class="fas fa-envelope me-1"></i><strong>Email:</strong> ${alert.email}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-phone me-1"></i><strong>Phone:</strong> ${alert.phone}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-car me-1"></i><strong>Car:</strong> ${alert.carYear || ''} ${alert.carMake} ${alert.carModel}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-dollar-sign me-1"></i><strong>Price:</strong> ${typeof alert.carPrice === 'number' ? 'N$' + alert.carPrice.toLocaleString() : alert.carPrice || 'N/A'}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-tachometer-alt me-1"></i><strong>Mileage:</strong> ${alert.carMileage ? alert.carMileage + ' km' : 'N/A'}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-map-marker-alt me-1"></i><strong>Location:</strong> ${alert.carLocation || 'N/A'}
+                                    </small>
+                                    ${alert.message ? `
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-comment me-1"></i><strong>Message:</strong> ${alert.message}
+                                    </small>
+                                    ` : ''}
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-calendar me-1"></i><strong>Created:</strong> ${date}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="btn-group w-100" role="group">
+                                    <button onclick="deactivateAlert('${alert.id}')" class="btn btn-outline-warning btn-sm" ${!alert.isActive ? 'disabled' : ''}>
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    <button onclick="deleteAlert('${alert.id}')" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('alertsContainer').innerHTML = `
+            <div class="row">
+                ${html}
+            </div>
+        `;
+    }
+
+    // Render Car Enquiries
+    function renderCarEnquiries(enquiries) {
+        let html = '';
+        if (enquiries.length === 0) {
+            html = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-question-circle fa-3x mb-3"></i>
+                        <h5>No Car Enquiries</h5>
+                        <p>No car enquiries received yet.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            enquiries.forEach(enquiry => {
+                const date = new Date(enquiry.createdAt).toLocaleDateString();
+                const time = new Date(enquiry.createdAt).toLocaleTimeString();
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card enquiry-card h-100">
+                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                                <small class="text-truncate">${enquiry.carName}</small>
+                                <button onclick="deleteEnquiry('${enquiry.id}')" class="btn btn-sm btn-light">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">${enquiry.fullName}</h6>
+                                <p class="card-text">${enquiry.message}</p>
+                                <div class="enquiry-meta">
+                                    <small class="text-muted">
+                                        <i class="fas fa-envelope me-1"></i>${enquiry.email}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-1"></i>${enquiry.phone}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-car me-1"></i>Car: ${enquiry.carName}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>${date}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>${time}
+                                    </small>
+                                </div>
+                            </div>
+                            <!-- Removed reply button from footer -->
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('enquiriesContainer').innerHTML = `
+            <div class="row">
+                ${html}
+            </div>
+        `;
+    }
+
+    // ==================== CRUD OPERATIONS ====================
+
+    async function deleteMessage(messageId) {
+        if (!confirm('Delete this message permanently?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/contact/${messageId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            // Refresh messages list
+            const messagesRes = await makeAuthenticatedRequest('/api/dashboard/messages');
+            const messages = await messagesRes.json();
+            renderMessages(messages);
+            document.getElementById('messagesCount').textContent = messages.length;
+            document.getElementById('messagesBadge').textContent = `${messages.length} messages`;
+            document.getElementById('totalMessages').textContent = messages.length;
+            
+            showToast('Message deleted successfully!');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deleteCar(carId) {
+        if (!confirm('Delete this car permanently?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/cars/${carId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            // Refresh cars list
+            const carsRes = await makeAuthenticatedRequest('/api/dashboard/cars');
+            allCars = await carsRes.json();
+            renderCars(allCars);
+            document.getElementById('carsCount').textContent = allCars.length;
+            document.getElementById('carsBadge').textContent = `${allCars.length} cars`;
+            document.getElementById('totalCars').textContent = allCars.length;
+            
+            showToast('Car deleted successfully!');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deleteSubscriber(subscriberId) {
+        if (!confirm('Delete this subscriber permanently?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/newsletter/subscribers/${subscriberId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            // Refresh subscribers list
+            const subscribersRes = await makeAuthenticatedRequest('/api/dashboard/newsletter');
+            const subscribers = await subscribersRes.json();
+            renderSubscribers(subscribers);
+            document.getElementById('subscribersCount').textContent = subscribers.length;
+            document.getElementById('subscribersBadge').textContent = `${subscribers.length} subscribers`;
+            document.getElementById('totalSubscribers').textContent = subscribers.length;
+            
+            showToast('Subscriber deleted successfully!');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deleteEnquiry(enquiryId) {
+        if (!confirm('Delete this car enquiry permanently?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/car-enquiries/${enquiryId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            // Refresh enquiries list
+            const enquiriesRes = await makeAuthenticatedRequest('/api/dashboard/car-enquiries');
+            const enquiries = await enquiriesRes.json();
+            renderCarEnquiries(enquiries);
+            document.getElementById('enquiriesCount').textContent = enquiries.length;
+            document.getElementById('enquiriesBadge').textContent = `${enquiries.length} enquiries`;
+            document.getElementById('totalEnquiries').textContent = enquiries.length;
+            
+            showToast('Car enquiry deleted successfully!');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deactivateAlert(alertId) {
+        if (!confirm('Deactivate this price alert?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/price-alerts/${alertId}/deactivate`, {
+                method: 'PATCH'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Deactivate failed');
+            }
+
+            // Refresh alerts list
+            const alertsRes = await makeAuthenticatedRequest('/api/dashboard/price-alerts');
+            const alerts = await alertsRes.json();
+            renderAlerts(alerts);
+            document.getElementById('alertsCount').textContent = alerts.length;
+            document.getElementById('alertsBadge').textContent = `${alerts.length} alerts`;
+            document.getElementById('totalAlerts').textContent = alerts.length;
+            
+            showToast('Price alert deactivated successfully!');
+        } catch (error) {
+            console.error('Deactivate error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deleteAlert(alertId) {
+        if (!confirm('Delete this price alert permanently?')) return;
+
+        try {
+            const res = await makeAuthenticatedRequest(`/api/price-alerts/${alertId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            // Refresh alerts list
+            const alertsRes = await makeAuthenticatedRequest('/api/dashboard/price-alerts');
+            const alerts = await alertsRes.json();
+            renderAlerts(alerts);
+            document.getElementById('alertsCount').textContent = alerts.length;
+            document.getElementById('alertsBadge').textContent = `${alerts.length} alerts`;
+            document.getElementById('totalAlerts').textContent = alerts.length;
+            
+            showToast('Price alert deleted successfully!');
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    function replyToMessage(email) {
+        window.location.href = `mailto:${email}`;
+    }
+
+    function replyToEnquiry(email) {
+        window.location.href = `mailto:${email}`;
+    }
+
+    // ==================== EDIT CAR FUNCTIONALITY ====================
+
+    function editCar(carId) {
+        const car = allCars.find(c => c.id == carId);
+        if (!car) {
+            alert('Car not found!');
+            return;
+        }
+
+        // Populate the edit form with car data
+        document.getElementById('editCarId').value = car.id;
+        document.getElementById('editMake').value = car.make || '';
+        document.getElementById('editModel').value = car.model || '';
+        document.getElementById('editYear').value = car.year || '';
+        document.getElementById('editMileage').value = car.mileage || '';
+        document.getElementById('editCondition').value = car.condition || '';
+        document.getElementById('editBodyType').value = car.bodyType || '';
+        document.getElementById('editTransmission').value = car.transmission || '';
+        document.getElementById('editFuelType').value = car.fuelType || '';
+        document.getElementById('editDriveType').value = car.driveType || '';
+        document.getElementById('editLocation').value = car.location || '';
+        
+        // FIXED: Display price exactly as stored (no modification)
+        document.getElementById('editPrice').value = car.price || '';
+        
+        document.getElementById('editDescription').value = car.description || '';
+        document.getElementById('editSellerName').value = car.sellerName || '';
+        document.getElementById('editSellerEmail').value = car.sellerEmail || '';
+        document.getElementById('editSellerPhone').value = car.sellerPhone || '';
+        document.getElementById('editPreferredContact').value = car.preferredContact || 'email';
+
+        // Store current car images
+        currentEditCarImages = car.images || [];
+        renderExistingImages();
+
+        // Show edit section and hide others
+        adminContent.style.display = 'none';
+        sellCarSection.style.display = 'none';
+        editCarSection.style.display = 'block';
+    }
+
+    function renderExistingImages() {
+    const container = document.getElementById('editExistingImages');
+    container.innerHTML = '';
+    
+    currentEditCarImages.forEach((image, index) => {
+        const imageItem = document.createElement('div');
+        imageItem.className = `image-preview-item ${image.isPrimary ? 'active' : ''}`;
+        imageItem.innerHTML = `
+            <img src="${image.imageUrl}" alt="Car image ${index + 1}">
+            ${image.isPrimary ? '<div class="primary-badge">Primary</div>' : ''}
+            <div class="image-preview-overlay">
+                Click to set as primary
+            </div>
+        `;
+        
+        // Add click event to set as primary
+        imageItem.addEventListener('click', function() {
+            setPrimaryExistingImage(index);
+        });
+        
+        container.appendChild(imageItem);
+    });
+    
+    // Set primary image index
+    const primaryIndex = currentEditCarImages.findIndex(img => img.isPrimary);
+    document.getElementById('editPrimaryImageIndex').value = primaryIndex >= 0 ? primaryIndex : 0;
+}
+
+    function setPrimaryExistingImage(index) {
+        currentEditCarImages.forEach((img, i) => {
+            img.isPrimary = i === index;
+        });
+        renderExistingImages();
+    }
+
+    function removeExistingImage(index) {
+        if (confirm('Remove this image?')) {
+            currentEditCarImages.splice(index, 1);
+            renderExistingImages();
+        }
+    }
+
+    // Cancel edit and return to dashboard
+    document.getElementById('cancelEditBtn').addEventListener('click', function() {
+        editCarSection.style.display = 'none';
+        adminContent.style.display = 'block';
+    });
+
+    // Handle edit form submission
+    document.getElementById('carEditForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(document.getElementById('carEditForm'));
+        const carId = document.getElementById('editCarId').value;
+
+        // Add existing images data
+        const existingImagesData = JSON.stringify(currentEditCarImages);
+        formData.append('existingImages', existingImagesData);
+
+        try {
+            console.log('✏️ Attempting to update car...');
+            
+            const res = await fetch(`/api/cars/${carId}/update`, {
+                method: 'POST',
+                headers: {
+                    'admin-token': adminToken
+                },
+                body: formData
+            });
+
+            console.log('📡 Response status:', res.status);
+            
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error('❌ Server error response:', errorText);
+                throw new Error('Failed to update car');
+            }
+
+            const result = await res.json();
+            console.log('✅ Car updated successfully:', result);
+            
+            showToast('Car updated successfully!');
+
+            // Switch back to dashboard view
+            editCarSection.style.display = 'none';
+            adminContent.style.display = 'block';
+
+            // Reload car list
+            const carsRes = await fetch('/api/dashboard/cars', {
+                headers: { 'admin-token': adminToken }
+            });
+            allCars = await carsRes.json();
+            renderCars(allCars);
+            loadData();
+
+        } catch (error) {
+            console.error('❌ Update car error:', error);
+            alert('Error updating car: ' + error.message);
+        }
+    });
+
+    // ==================== IMAGE UPLOAD & COMPRESSION FUNCTIONALITY ====================
+
+    function initImageUpload() {
+        const carImagesInput = document.getElementById('carImages');
+        const editCarImagesInput = document.getElementById('editCarImages');
+        
+        if (carImagesInput) {
+            carImagesInput.addEventListener('change', function(e) {
+                handleImageUploadWithCompression(e.target.files, 'imagePreviews', 'primaryImageIndex');
+            });
+        }
+        
+        if (editCarImagesInput) {
+            editCarImagesInput.addEventListener('change', function(e) {
+                handleImageUpload(e.target.files, 'editImagePreviews', 'editPrimaryImageIndex');
+            });
+        }
+    }
+
+    // Enhanced image upload with compression
+    async function handleImageUploadWithCompression(files, previewContainerId, primaryIndexFieldId) {
+        const container = document.getElementById(previewContainerId);
+        container.innerHTML = '';
+        compressedImages = []; // Reset compressed images array
+        
+        if (!files || files.length === 0) return;
+
+        // Show compression progress
+        const compressionProgress = document.getElementById('compressionProgress');
+        const compressionPercent = document.getElementById('compressionPercent');
+        const compressionStatus = document.getElementById('compressionStatus');
+        
+        compressionProgress.style.display = 'block';
+        compressionPercent.textContent = '0%';
+        compressionStatus.textContent = 'Starting compression...';
+
+        let processedCount = 0;
+        const totalFiles = files.length;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.type.startsWith('image/')) continue;
+
+            try {
+                // Update progress
+                processedCount++;
+                const progress = Math.round((processedCount / totalFiles) * 100);
+                compressionPercent.textContent = `${progress}%`;
+                compressionStatus.textContent = `Compressing image ${processedCount} of ${totalFiles}...`;
+                
+                // Update progress bar
+                const progressBar = document.querySelector('#compressionProgress .progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                }
+
+                // Compress the image
+                const compressedBlob = await compressImage(file, 1200, 800, 0.7);
+                
+                // Create a new file from the compressed blob
+                const compressedFile = new File([compressedBlob], file.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+
+                // Store compressed file
+                compressedImages.push(compressedFile);
+
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = `image-preview-item ${i === 0 ? 'active' : ''}`;
+                    imageItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${i + 1}">
+                        ${i === 0 ? '<div class="primary-badge">Primary</div>' : ''}
+                        <div class="image-preview-overlay">
+                            Click to set as primary
+                        </div>
+                    `;
+                    
+                    // Add click event to set as primary
+                    imageItem.addEventListener('click', function() {
+                        setPrimaryImage(i, previewContainerId, primaryIndexFieldId);
+                    });
+                    
+                    container.appendChild(imageItem);
+                };
+                reader.readAsDataURL(compressedFile);
+
+            } catch (error) {
+                console.error('Error compressing image:', error);
+                // Fallback to original file if compression fails
+                compressedImages.push(file);
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = `image-preview-item ${i === 0 ? 'active' : ''}`;
+                    imageItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${i + 1}">
+                        ${i === 0 ? '<div class="primary-badge">Primary</div>' : ''}
+                        <div class="image-preview-overlay">
+                            Click to set as primary
+                        </div>
+                    `;
+                    
+                    imageItem.addEventListener('click', function() {
+                        setPrimaryImage(i, previewContainerId, primaryIndexFieldId);
+                    });
+                    
+                    container.appendChild(imageItem);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Hide progress bar when done
+        setTimeout(() => {
+            compressionProgress.style.display = 'none';
+            compressionStatus.textContent = 'Compression completed!';
+        }, 1000);
+
+        // Set first image as primary by default
+        document.getElementById(primaryIndexFieldId).value = 0;
+    }
+
+    // Original image upload without compression (for edit form)
+    function handleImageUpload(files, previewContainerId, primaryIndexFieldId) {
+        const container = document.getElementById(previewContainerId);
+        container.innerHTML = '';
+        
+        if (!files || files.length === 0) return;
+        
+        Array.from(files).forEach((file, index) => {
+            if (!file.type.startsWith('image/')) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageItem = document.createElement('div');
+                imageItem.className = `image-preview-item ${index === 0 ? 'active' : ''}`;
+                imageItem.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${index + 1}">
+                    ${index === 0 ? '<div class="primary-badge">Primary</div>' : ''}
+                    <div class="image-preview-overlay">
+                        Click to set as primary
+                    </div>
+                `;
+                
+                // Add click event to set as primary
+                imageItem.addEventListener('click', function() {
+                    setPrimaryImage(index, previewContainerId, primaryIndexFieldId);
+                });
+                
+                container.appendChild(imageItem);
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Set first image as primary by default
+        document.getElementById(primaryIndexFieldId).value = 0;
+    }
+
+    function setPrimaryImage(index, previewContainerId, primaryIndexFieldId) {
+        const container = document.getElementById(previewContainerId);
+        const items = container.querySelectorAll('.image-preview-item');
+        
+        items.forEach((item, i) => {
+            // Remove active class and primary badge from all items
+            item.classList.remove('active');
+            const existingBadge = item.querySelector('.primary-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add active class and primary badge to clicked item
+            if (i === index) {
+                item.classList.add('active');
+                const primaryBadge = document.createElement('div');
+                primaryBadge.className = 'primary-badge';
+                primaryBadge.textContent = 'Primary';
+                item.appendChild(primaryBadge);
+            }
+        });
+        
+        // Update the hidden input with the selected primary image index
+        document.getElementById(primaryIndexFieldId).value = index;
+    }
+
+    // Image compression function
+    async function compressImage(file, maxWidth = 1200, maxHeight = 800, quality = 0.7) {
+        return new Promise((resolve, reject) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                
+                // Calculate new dimensions while maintaining aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+                
+                // Set canvas dimensions
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress image
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert to blob with specified quality
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        resolve(blob);
+                    } else {
+                        reject(new Error('Canvas to Blob conversion failed'));
+                    }
+                }, 'image/jpeg', quality);
+            };
+            
+            img.onerror = function() {
+                reject(new Error('Failed to load image'));
+            };
+            
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    // ==================== IMPROVED DESCRIPTION FORMATTING ====================
+
+    function initDescriptionFormatting() {
+        const formatButtons = document.querySelectorAll('.format-btn');
+        
+        formatButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const format = this.getAttribute('data-format');
+                const isEdit = this.closest('#editCarSection');
+                const textarea = isEdit ? 
+                    document.getElementById('editDescription') : 
+                    document.getElementById('description');
+                
+                // Update active button
+                formatButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Store current cursor position
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                
+                if (format === 'bullets' && selectedText) {
+                    // Convert selected text to bullet points
+                    const bulletedText = selectedText.split('\n')
+                        .map(line => line.trim() ? `• ${line.trim()}` : '')
+                        .join('\n');
+                    
+                    textarea.value = textarea.value.substring(0, start) + 
+                                   bulletedText + 
+                                   textarea.value.substring(end);
+                } else if (format === 'paragraph' && selectedText) {
+                    // Convert bullet points back to paragraph
+                    const paragraphText = selectedText.split('\n')
+                        .map(line => line.replace(/^•\s*/, '').trim())
+                        .filter(line => line)
+                        .join(' ');
+                    
+                    textarea.value = textarea.value.substring(0, start) + 
+                                   paragraphText + 
+                                   textarea.value.substring(end);
+                }
+            });
+        });
+    }
+
+    // ==================== CAR SELLING FORM SUBMISSION ====================
+
+    document.getElementById('carSellingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Show loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        submitBtn.disabled = true;
+
+        try {
+            const formData = new FormData(document.getElementById('carSellingForm'));
+            
+            // Replace original files with compressed ones
+            if (compressedImages.length > 0) {
+                // Remove the original files input
+                formData.delete('carImages');
+                
+                // Add compressed files
+                compressedImages.forEach((file, index) => {
+                    formData.append('carImages', file, file.name);
+                });
+            }
+            
+            const res = await fetch('/api/cars', {
+                method: 'POST',
+                headers: {
+                    'admin-token': adminToken
+                },
+                body: formData
+            });
+
+            if (!res.ok) {
+                let errorData;
+                try {
+                    errorData = await res.json();
+                } catch {
+                    errorData = { error: `Server error: ${res.status}` };
+                }
+                throw new Error(errorData.error || `Failed to add car: ${res.status}`);
+            }
+
+            const result = await res.json();
+            
+            showToast('Car added successfully!');
+            document.getElementById('carSellingForm').reset();
+            document.getElementById('imagePreviews').innerHTML = '';
+            compressedImages = []; // Clear compressed images
+
+            // Switch back to dashboard view
+            sellCarSection.style.display = 'none';
+            adminContent.style.display = 'block';
+
+            // Reload car list
+            const carsRes = await fetch('/api/dashboard/cars', {
+                headers: { 'admin-token': adminToken }
+            });
+            allCars = await carsRes.json();
+            renderCars(allCars);
+            loadData();
+
+        } catch (error) {
+            console.error('❌ Add car error:', error);
+            alert('Error adding car: ' + error.message);
+        } finally {
+            // Restore button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // ==================== UTILITY FUNCTIONS ====================
+
+    function showToast(message) {
+        let toastElement = document.getElementById('actionToast');
+        if (!toastElement) {
+            const toastContainer = document.createElement('div');
+            toastContainer.innerHTML = `
+                <div id="actionToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toastContainer.firstElementChild);
+            toastElement = document.getElementById('actionToast');
+        }
+        
+        const toastBody = toastElement.querySelector('.toast-body');
+        toastBody.textContent = message;
+        
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+</script>
+</body>
+</html>

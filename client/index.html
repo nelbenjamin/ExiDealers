@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exi Dealers | Luxury Car Marketplace</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1669192747799799');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+    <script>
+    // Force favicon update
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) {
+        // Add timestamp to bypass cache
+        const timestamp = new Date().getTime();
+        favicon.href = 'favicon.png?' + timestamp;
+        
+        // Create new link element as backup
+        const newFavicon = document.createElement('link');
+        newFavicon.rel = 'icon';
+        newFavicon.href = 'favicon.png?' + timestamp;
+        newFavicon.type = 'image/png';
+        document.head.appendChild(newFavicon);
+    }
+</script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet" />
+    <style>
+    /* Luxury Animations */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes driveIn {
+        0% { right: -100px; }
+        100% { right: 100%; }
+    }
+
+    .car-card img {
+      object-fit: cover;
+      height: 200px;
+    }
+
+    .floating-element {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    /* Luxury Card Styles */
+    .luxury-card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    
+    .luxury-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .luxury-card .card-img-top {
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .luxury-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    /* Best Deals Section */
+    .best-deals-section {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .best-deals-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(to right, #ffc107, #fd7e14, #dc3545);
+    }
+    
+    .deal-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(45deg, #dc3545, #fd7e14);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    }
+    
+    /* Moving elements background */
+    .moving-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        overflow: hidden;
+    }
+    
+    .moving-bg-element {
+        position: absolute;
+        background: rgba(13, 110, 253, 0.05);
+        border-radius: 50%;
+    }
+
+    .moving-car {
+        position: absolute;
+        bottom: 20%;
+        right: -100px;
+        font-size: 3rem;
+        color: #ffc107;
+        animation: driveIn 15s linear infinite;
+        z-index: 1;
+    }
+
+    .moving-icon {
+        position: absolute;
+        color: rgba(255, 193, 7, 0.3);
+        font-size: 1.5rem;
+        z-index: 1;
+    }
+    
+    /* Hero enhancements */
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                    url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1800&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 20;
+    }
+    
+    /* Stats counter */
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2rem; /* Reduced from 2.5rem */
+        font-weight: 800;
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem; /* Reduced from 1rem */
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .brand-text {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2rem !important; /* Increased from 1.5rem */
+        color: #fff;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        margin-left: 8px;
+    }
+
+    .navbar-brand i {
+        font-size: 2rem !important; /* Increased from 1.7rem */
+    }
+    
+    /* Background for all pages */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1800&q=80') no-repeat center center;
+        background-size: cover;
+        z-index: -2;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+        filter: brightness(0.8);
+    }
+    
+    body.background-loaded::before {
+        opacity: 0.8;
+    }
+    
+    /* Ensure content has proper background */
+    .bg-white, .best-deals-section, .cta-section {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .bg-light {
+        background-color: rgba(248, 249, 250, 0.95) !important;
+    }
+    
+    .card, .feature-card {
+        background-color: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    /* ENHANCED: Smooth CTA to Footer Transition */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.9) 0%, rgba(33, 37, 41, 0.95) 100%) !important;
+        position: relative;
+        overflow: hidden;
+        padding: 80px 0;
+        margin-bottom: 0;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1800&q=80') no-repeat center center;
+        background-size: cover;
+        opacity: 0.4;
+        z-index: -1;
+    }
+
+    .cta-section::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent 0%, #1a1a1a 100%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .cta-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ENHANCED: Smooth Footer Design */
+    .footer {
+        background: linear-gradient(to bottom, #1a1a1a 0%, #0c0c0c 100%) !important;
+        position: relative;
+        margin-top: -1px;
+        padding-top: 60px;
+        border-top: none;
+    }
+
+    .footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    }
+
+    .footer h5 {
+        font-size: 1.1rem !important;
+        margin-bottom: 1rem !important;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .footer p, .footer li, .footer a {
+        font-size: 0.9rem !important;
+        transition: all 0.3s ease;
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .footer a {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .footer a:hover {
+        color: #ffffff !important;
+        padding-left: 5px;
+    }
+
+    .footer .list-unstyled li {
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .footer hr.bg-light {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        margin: 2rem 0;
+    }
+
+    .footer i {
+        color: rgba(255, 255, 255, 0.7);
+        width: 20px;
+        text-align: center;
+        margin-right: 8px;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    /* UPDATED: Removed description styles since we're removing description from cards */
+    .navbar-brand img {
+        filter: brightness(0) invert(1);
+        height: 60px !important; /* Reduced from 65px */
+        width: auto;
+    }
+
+    /* UPDATED: Shorter card height for best deals */
+    .best-deals-card .card-body {
+        padding: 1rem;
+    }
+
+    /* NEW: Consistent text sizes for best deals cards */
+    .best-deals-card .card-title {
+        font-size: 1rem !important; /* Consistent size */
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .best-deals-card .price {
+        font-size: 1.1rem !important; /* Consistent size */
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .best-deals-card .details small {
+        font-size: 0.85rem !important; /* Consistent size */
+    }
+
+    .best-deals-card .btn {
+        font-size: 0.9rem !important; /* Consistent size */
+    }
+
+    /* NEW: Slightly reduced header/navigation size */
+    .navbar {
+        padding-top: 0.7rem; /* Reduced from 0.8rem */
+        padding-bottom: 0.7rem; /* Reduced from 0.8rem */
+        min-height: 80px; /* Reduced from 85px */
+    }
+
+    .nav-link {
+        font-size: 1rem !important; /* Reduced from 1.1rem */
+        padding: 0.6rem 1rem !important; /* Reduced padding */
+        font-weight: 600 !important;
+    }
+
+    /* NEW: Slightly reduced hero section text sizes */
+    .hero-section h1 {
+        font-size: 3rem !important; /* Reduced from 3.5rem */
+        margin-bottom: 1.2rem !important;
+    }
+
+    .hero-section .lead {
+        font-size: 1.2rem !important; /* Reduced from 1.4rem */
+        margin-bottom: 1.8rem !important;
+    }
+
+    .hero-section .btn-lg {
+        font-size: 1rem !important; /* Reduced from 1.1rem */
+        padding: 0.8rem 1.6rem !important; /* Reduced padding */
+    }
+
+    /* NEW: Reduced Explore Inventory icon size */
+    .hero-section .btn-lg i {
+        font-size: 0.85rem !important; /* Reduced icon size */
+        margin-right: 0.4rem !important;
+    }
+
+    /* NEW: Reduced section titles and subtitles */
+    .section-title {
+        font-size: 2rem !important; /* Reduced size */
+        margin-bottom: 1rem !important;
+    }
+
+    .section-subtitle {
+        font-size: 1rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced feature card content */
+    .feature-card h3 {
+        font-size: 1.3rem !important; /* Reduced from default */
+        margin-bottom: 0.8rem !important;
+    }
+
+    .feature-card p {
+        font-size: 0.9rem !important; /* Reduced text size */
+        line-height: 1.4 !important;
+    }
+
+    .feature-icon {
+        font-size: 1.5rem !important; /* Reduced icon size from likely 2rem+ */
+        width: 50px !important; /* Reduced container size */
+        height: 50px !important; /* Reduced container size */
+        line-height: 50px !important; /* Reduced line height */
+        margin-bottom: 1rem !important;
+    }
+
+    /* Buy Within Your Budget Section - Perfect Fit Layout */
+    .budget-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 70px 0;
+    }
+    
+    .budget-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(to right, #0d6efd, #20c997);
+    }
+    
+    .budget-row {
+        display: flex;
+        align-items: stretch;
+    }
+    
+    .budget-image-column {
+        padding-right: 15px;
+    }
+    
+    .budget-form-column {
+        padding-left: 15px;
+    }
+    
+    /* Perfect height image container - no scrolling needed */
+    .budget-image-container {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        height: 100%;
+        min-height: 520px; /* Tall enough to fit everything */
+        max-height: 550px;
+    }
+    
+    .budget-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .budget-image-container:hover img {
+        transform: scale(1.02);
+    }
+    
+    .budget-image-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        padding: 1.5rem;
+    }
+    
+    .budget-image-overlay h4 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .budget-image-overlay p {
+        font-size: 0.95rem;
+    }
+    
+        /* Buy Within Your Budget Section - Perfect Fit Layout */
+    .budget-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 70px 0;
+    }
+    
+    .budget-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(to right, #0d6efd, #20c997);
+    }
+    
+    .budget-row {
+        display: flex;
+        align-items: stretch;
+    }
+    
+    .budget-image-column {
+        padding-right: 15px;
+    }
+    
+    .budget-form-column {
+        padding-left: 15px;
+    }
+    
+    /* Perfect height image container - no scrolling needed */
+    .budget-image-container {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        height: 100%;
+        min-height: 520px;
+        max-height: 550px;
+    }
+    
+    .budget-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .budget-image-container:hover img {
+        transform: scale(1.02);
+    }
+    
+    .budget-image-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        padding: 1.5rem;
+    }
+    
+    .budget-image-overlay h4 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .budget-image-overlay p {
+        font-size: 0.95rem;
+    }
+    
+    /* Perfect height calculator - everything fits without scrolling */
+    .budget-calculator {
+        border-radius: 16px;
+        border: none;
+        background: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        min-height: 520px;
+        max-height: 550px;
+    }
+    
+    .budget-calculator .card-body {
+        padding: 1.75rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .budget-calculator h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .budget-calculator p.text-muted {
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .budget-calculator form {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .budget-form-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    /* Optimized form layout - more compact */
+    .budget-quick-btn {
+        transition: all 0.3s ease;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .budget-quick-btn:hover,
+    .budget-quick-btn.active {
+        background: #0d6efd;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+    }
+    
+    /* More compact input spacing */
+    .budget-form-content .row.mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .budget-form-content .mb-4:not(.row) {
+        margin-bottom: 1rem !important;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+    
+    .input-group {
+        margin-bottom: 0.25rem;
+    }
+    
+    small.text-muted {
+        font-size: 0.75rem;
+        display: block;
+        margin-top: 0.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Quick budget button container - more compact */
+    .d-flex.flex-wrap.gap-2 {
+        gap: 0.4rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* More compact select elements */
+    .form-select, .form-control {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Compact results display */
+    .budget-results {
+        border-left: 3px solid #0d6efd;
+        animation: fadeInUp 0.5s ease;
+        margin-top: 0.25rem;
+        padding: 0.75rem !important;
+        margin-bottom: 0.75rem;
+        background: rgba(13, 110, 253, 0.05);
+    }
+    
+    .budget-results h5 {
+        font-size: 0.95rem;
+        margin-bottom: 0.15rem;
+    }
+    
+    .budget-results .display-6 {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    /* Button section - fixed at bottom but visible */
+    .budget-calculator .mt-auto {
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    #findCarsBtn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    
+    #findCarsBtn .badge {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .text-muted.small {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .budget-image-container,
+        .budget-calculator {
+            min-height: 480px;
+            max-height: 500px;
+        }
+        
+        .budget-calculator .card-body {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .budget-row {
+            flex-direction: column;
+        }
+        
+        .budget-image-column,
+        .budget-form-column {
+            padding: 0;
+        }
+        
+        .budget-image-column {
+            margin-bottom: 2rem;
+        }
+        
+        .budget-image-container {
+            min-height: 400px;
+            max-height: none;
+        }
+        
+        .budget-calculator {
+            min-height: auto;
+            max-height: none;
+        }
+        
+        .budget-calculator .card-body {
+            padding: 1.75rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .budget-section {
+            padding: 50px 0;
+        }
+        
+        .budget-image-container {
+            min-height: 350px;
+        }
+        
+        .budget-calculator .card-body {
+            padding: 1.5rem;
+        }
+        
+        .budget-quick-btn {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <img src="logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
+        </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+               </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="overlay"></div>
+        <div class="container text-center hero-content">
+            <h1 class="display-3 fw-bold text-white mb-4">Luxury Awaits at Exi Dealers</h1>
+            <p class="lead text-white mb-5">Discover premium vehicles with unmatched value and exceptional service</p>
+            <div class="mt-4">
+                <a href="view.html" class="btn btn-warning btn-lg me-3 pulse-btn">
+                    <i class="fas fa-search me-2"></i>Explore Inventory
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-6">
+                    <div class="stat-item floating-element">
+                        <div class="stat-number" id="carsCount">0</div>
+                        <div class="stat-label">Premium Vehicles</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="stat-item floating-element" style="animation-delay: 0.5s;">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Verified Listings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Deals Section -->
+    <section class="best-deals-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Exclusive Best Deals</h2>
+                <p class="section-subtitle">Curated selection of premium vehicles at exceptional value</p>
+            </div>
+            <div class="row g-4" id="bestDealsContainer">
+                <!-- Best deals will be loaded here dynamically -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading best deals...</span>
+                    </div>
+                    <p class="mt-2">Loading exclusive deals...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+                <!-- Buy Within Your Budget Section -->
+    <section class="budget-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Buy Within Your Budget</h2>
+                <p class="section-subtitle">Find your perfect luxury vehicle that fits your financial plan</p>
+            </div>
+            
+            <div class="budget-row">
+                <!-- Left side: Premium Car Image -->
+                <div class="col-lg-6 budget-image-column">
+                    <div class="budget-image-container">
+                        <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                             alt="Luxury Cars Within Budget" 
+                             class="img-fluid">
+                        <div class="budget-image-overlay">
+                            <h4 class="text-white mb-2">Smart Luxury Shopping</h4>
+                            <p class="text-white mb-0">Discover premium vehicles that match your financial goals</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right side: Budget Calculator -->
+                <div class="col-lg-6 budget-form-column">
+                    <div class="budget-calculator card">
+                        <div class="card-body">
+                            <div class="budget-form-content">
+                                <h3 class="mb-4">Find Cars Within Your Budget</h3>
+                                <p class="text-muted mb-4">Enter your budget range and discover available luxury vehicles</p>
+                                
+                                <form id="budgetForm">
+                                    <!-- Budget Range -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label for="minBudget" class="form-label fw-semibold">
+                                                <i class="fas fa-money-bill-wave me-2"></i>Minimum Budget
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">N$</span>
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="minBudget" 
+                                                       placeholder="e.g., 50,000"
+                                                       min="0"
+                                                       step="1000">
+                                            </div>
+                                            <small class="text-muted">Enter minimum amount</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="maxBudget" class="form-label fw-semibold">
+                                                <i class="fas fa-money-bill-wave me-2"></i>Maximum Budget
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">N$</span>
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="maxBudget" 
+                                                       placeholder="e.g., 200,000"
+                                                       min="0"
+                                                       step="1000">
+                                            </div>
+                                            <small class="text-muted">Enter maximum amount</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quick Budget Buttons -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">Quick Budget Selector:</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button type="button" class="btn btn-outline-primary budget-quick-btn" data-min="0" data-max="49999">
+                                                Under N$50K
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary budget-quick-btn" data-min="50000" data-max="99999">
+                                                N$50K - N$100K
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary budget-quick-btn" data-min="100000" data-max="199999">
+                                                N$100K - N$200K
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary budget-quick-btn" data-min="200000" data-max="499999">
+                                                N$200K - N$500K
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Additional Filters -->
+                                    <div class="mb-4">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="vehicleType" class="form-label fw-semibold">
+                                                    <i class="fas fa-car me-2"></i>Vehicle Type
+                                                </label>
+                                                <select class="form-select" id="vehicleType">
+                                                    <option value="">All Types</option>
+                                                    <option value="SUV">SUV</option>
+                                                    <option value="Sedan">Sedan</option>
+                                                    <option value="Hatchback">Hatchback</option>
+                                                    <option value="Coupe">Coupe</option>
+                                                    <option value="Convertible">Convertible</option>
+                                                    <option value="Truck">Truck</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="yearRange" class="form-label fw-semibold">
+                                                    <i class="fas fa-calendar me-2"></i>Year Range
+                                                </label>
+                                                <select class="form-select" id="yearRange">
+                                                    <option value="">Any Year</option>
+                                                    <option value="2020-2025">2020 - 2025</option>
+                                                    <option value="2015-2020">2015 - 2020</option>
+                                                    <option value="2010-2015">2010 - 2015</option>
+                                                    <option value="2005-2010">2005 - 2010</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Results Preview -->
+                                    <div class="budget-results mb-4 p-3 bg-light rounded-3" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h5 class="mb-1" id="carsCountText">0 Cars Found</h5>
+                                                <p class="text-muted mb-0" id="budgetRangeText">Within your budget range</p>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="display-6 text-primary fw-bold" id="matchCount">0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Submit Button (outside form for better positioning) -->
+                            <div class="mt-auto">
+                                <button type="button" class="btn btn-primary btn-lg w-100" id="findCarsBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    <span id="btnText">Find Available Cars</span>
+                                    <span class="badge bg-light text-primary ms-2" id="carsBadge" style="display: none;">0</span>
+                                </button>
+                                
+                                <p class="text-muted text-center mt-3 small">
+                                    <i class="fas fa-lock me-1"></i> Your budget information is not stored
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-5 fade-in-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Why Choose Exi Dealers?</h2>
+                <p class="section-subtitle" style="color: white">Experience the difference of premium automotive service</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card luxury-card">
+                        <div class="feature-icon bg-primary">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Premium Selection</h3>
+                        <p>Discover an exclusive collection of luxury and performance vehicles, carefully curated for discerning buyers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card luxury-card">
+                        <div class="feature-icon bg-success">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <h3>Competitive Pricing</h3>
+                        <p>Get exceptional value with our transparent pricing strategy and exclusive deals on premium vehicles.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card luxury-card">
+                        <div class="feature-icon bg-warning">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Verified Quality</h3>
+                        <p>Every vehicle undergoes rigorous inspection to ensure premium quality and reliability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section py-5">
+        <div class="container text-center">
+            <h2 class="text-white mb-4">Ready to Find Your Dream Car?</h2>
+            <p class="lead text-white mb-4">Browse our exclusive collection of premium vehicles</p>
+            <a href="view.html" class="btn btn-light btn-lg me-3">Browse Inventory</a>
+            <a href="contact.html" class="btn btn-outline-light btn-lg">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-car-luxury"></i> Exi Dealers</h5>
+                    <p>Your trusted partner for buying premium quality vehicles.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="view.html">Browse Cars</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Premium Brands</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Mercedes-Benz</a></li>
+                        <li><a href="#">BMW</a></li>
+                        <li><a href="#">Audi</a></li>
+                        <li><a href="#">Lexus</a></li>
+                        <li><a href="#">Land Rover</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Windhoek, Namibia</li>
+                        <li><i class="fas fa-phone me-2"></i> +264 (81) 267 5760</li>
+                        <li><i class="fas fa-envelope me-2"></i> sales@exidealers.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light" />
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <p>&copy; 2025 Exi Dealers. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+    <!-- Homepage JavaScript -->
+    <script>
+        // Background image that emerges on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make the background emerge
+            setTimeout(() => {
+                document.body.classList.add('background-loaded');
+                document.querySelector('.hero-section').style.opacity = '1';
+            }, 100);
+        });
+
+        // Fetch and display best deals - UPDATED FOR PAGINATED API
+        async function loadBestDeals() {
+    try {
+        console.log('🔄 Loading best deals from API...');
+        
+        // Use a large limit to get all cars for homepage display
+        const response = await fetch('/api/cars?limit=1000');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: Failed to fetch cars`);
+        }
+        
+        const data = await response.json();
+        
+        // Extract cars array from the paginated response
+        const cars = data.cars || [];
+        const totalCars = data.pagination ? data.pagination.totalCars : cars.length;
+        
+        console.log(`✅ Loaded ${cars.length} cars from API (Total: ${totalCars})`);
+        
+        // Update stats with total car count
+        document.getElementById('carsCount').textContent = totalCars;
+        
+        const dealsContainer = document.getElementById('bestDealsContainer');
+        
+        if (!cars || cars.length === 0) {
+            dealsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-car"></i>
+                        <h4>No Cars Available</h4>
+                        <p class="text-muted">Check back soon for our exclusive deals!</p>
+                        <a href="/contact" class="btn btn-primary mt-3">Contact Us for Deals</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // FIX: Filter out cars with POA prices
+        const carsWithActualPrices = cars.filter(car => {
+            const price = car.price ? car.price.toString().toUpperCase() : '';
+            return !price.includes('POA') && !price.includes('P.O.A') && price !== 'POA' && price !== 'P.O.A';
+        });
+        
+        // Find best deals - cars with the best value (lower price per year ratio)
+        const bestDeals = carsWithActualPrices
+            .filter(car => car.price && car.year) // Only cars with price and year
+            .map(car => {
+                // Convert price string to number for calculation (remove any non-numeric characters except decimal)
+                const numericPrice = parseFloat(car.price.toString().replace(/[^\d.]/g, ''));
+                // Calculate value score (lower is better - cheaper and newer)
+                const valueScore = (numericPrice / car.year) * (2025 - car.year);
+                return { ...car, valueScore, numericPrice };
+            })
+            .sort((a, b) => a.valueScore - b.valueScore) // Sort by best value first
+            .slice(0, 3); // Take top 3 best deals
+        
+        console.log(`🎯 Found ${bestDeals.length} best deals (excluding POA prices)`);
+        
+        dealsContainer.innerHTML = '';
+        
+        if (bestDeals.length === 0) {
+            dealsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h4>No Deals Available</h4>
+                        <p class="text-muted">We're working on bringing you the best deals!</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        bestDeals.forEach(car => {
+            const dealCard = document.createElement('div');
+            dealCard.className = 'col-md-4';
+            
+            // Get primary image - this will automatically use the updated primary image from dashboard
+            const primaryImage = car.images && car.images.length > 0 ? 
+                (car.images.find(img => img.isPrimary) || car.images[0]).imageUrl : 
+                'https://via.placeholder.com/300x200?text=Premium+Vehicle';
+            
+            // UPDATED: Format price - display exactly as entered (no automatic N$ prefix)
+            let displayPrice = car.price !== null && car.price !== undefined ? 
+                car.price.toString() : 'N/A';
+            
+            // Capitalize condition
+            const condition = car.condition ? car.condition.charAt(0).toUpperCase() + car.condition.slice(1) : 'N/A';
+            
+            dealCard.innerHTML = `
+                <div class="card luxury-card best-deals-card h-100">
+                    <span class="deal-badge">BEST DEAL</span>
+                    <img src="${primaryImage}" 
+                         class="card-img-top" 
+                         alt="${car.make} ${car.model}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=Premium+Vehicle'">
+                    <div class="card-body">
+                        <h5 class="card-title">${car.year} ${car.make} ${car.model}</h5>
+                        <div class="price text-primary fw-bold fs-4 mb-2">${displayPrice}</div>
+                        
+                        <div class="details mb-3">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-tachometer-alt me-1"></i>${car.mileage ? car.mileage.toLocaleString() + ' km' : 'N/A'}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="fas fa-car me-1"></i>${condition}
+                            </small>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="/car-details.html?id=${car.id}" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            dealsContainer.appendChild(dealCard);
+        });
+        
+    } catch (error) {
+        console.error('❌ Error loading best deals:', error);
+        const dealsContainer = document.getElementById('bestDealsContainer');
+        dealsContainer.innerHTML = `
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    <h4>Unable to Load Deals</h4>
+                    <p class="text-muted">Please check your connection and try again.</p>
+                    <button onclick="loadBestDeals()" class="btn btn-primary mt-3">
+                        <i class="fas fa-refresh me-2"></i>Try Again
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+}
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBestDeals();
+            
+            // Initialize animations
+            const faders = document.querySelectorAll('.fade-in-section');
+            const appearOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    appearOnScroll.unobserve(entry.target);
+                });
+            }, appearOptions);
+
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        });
+    </script>
+
+        <!-- Newsletter Popup Modal -->
+    <div class="modal fade" id="newsletterModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-5">
+                    <i class="fas fa-envelope-open-text text-primary mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="mb-3">The Best Car Deals, Straight to Your Inbox</h3>
+                    <p class="text-muted mb-4">Join thousands of savvy car buyers and sellers. Get weekly updates with the hottest deals, insider tips, and auto marketplace trends.</p>
+                    <form id="newsletterForm">
+                        <div class="mb-3">
+                            <input type="email" class="form-control form-control-lg" placeholder="Enter your email address" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Send Me the Deals</button>
+                    </form>
+                    <p class="text-muted mt-3 small">We respect your privacy. Unsubscribe at any time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Newsletter functionality with localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const newsletterModal = new bootstrap.Modal(document.getElementById('newsletterModal'));
+        const hasSubmitted = localStorage.getItem('newsletterSubmitted');
+        const hasClosed = localStorage.getItem('newsletterClosed');
+
+        // Only show popup if user hasn't submitted or closed it before
+        if (!hasSubmitted && !hasClosed) {
+            setTimeout(function() {
+                newsletterModal.show();
+            }, 3000);
+        }
+
+        // Handle newsletter form submission
+        document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = this.querySelector('input[type="email"]').value;
+            
+            try {
+                const response = await fetch('/api/newsletter/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                if (response.ok) {
+                    alert('Thank you for subscribing to our newsletter!');
+                    // Store in localStorage that user has submitted
+                    localStorage.setItem('newsletterSubmitted', 'true');
+                    newsletterModal.hide();
+                } else {
+                    alert('There was an error with your subscription. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error with your subscription. Please try again.');
+            }
+        });
+
+        // Store when user closes the modal manually
+        document.getElementById('newsletterModal').addEventListener('hide.bs.modal', function() {
+            // Only set closed if they haven't already submitted
+            if (!localStorage.getItem('newsletterSubmitted')) {
+                localStorage.setItem('newsletterClosed', 'true');
+            }
+        });
+    });
+</script>
+    <!-- PROFESSIONAL BUDGET FINDER JAVASCRIPT - 100% ACCURATE -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const budgetForm = document.getElementById('budgetForm');
+        const minBudgetInput = document.getElementById('minBudget');
+        const maxBudgetInput = document.getElementById('maxBudget');
+        const budgetQuickBtns = document.querySelectorAll('.budget-quick-btn');
+        const budgetResults = document.querySelector('.budget-results');
+        const carsCountText = document.getElementById('carsCountText');
+        const budgetRangeText = document.getElementById('budgetRangeText');
+        const matchCount = document.getElementById('matchCount');
+        const findCarsBtn = document.getElementById('findCarsBtn');
+        const btnText = document.getElementById('btnText');
+        const carsBadge = document.getElementById('carsBadge');
+        
+        let availableCarsCount = 0;
+        let isChecking = false;
+        let lastRequestTimeout = null;
+        
+        // Load total car count for stats
+        async function loadTotalCarsCount() {
+            try {
+                const response = await fetch('/api/cars?limit=1');
+                if (response.ok) {
+                    const data = await response.json();
+                    availableCarsCount = data.pagination.totalCars || 0;
+                    
+                    // Update initial button text
+                    btnText.textContent = `Find Among ${availableCarsCount} Cars`;
+                    carsBadge.textContent = availableCarsCount;
+                    carsBadge.style.display = 'inline-block';
+                }
+            } catch (error) {
+                console.error('Error loading car count:', error);
+            }
+        }
+        
+        // Quick budget buttons
+        budgetQuickBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                budgetQuickBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Set budget inputs
+                const min = this.getAttribute('data-min');
+                const max = this.getAttribute('data-max');
+                
+                minBudgetInput.value = min;
+                maxBudgetInput.value = max;
+                
+                console.log(`💰 Selected budget: N$${min} - N$${max}`);
+                
+                // Check for matches
+                checkBudgetMatches(min, max);
+            });
+        });
+        
+        // Professional price extraction function (matches server-side)
+        function extractNumericPrice(priceStr) {
+            if (!priceStr || typeof priceStr !== 'string') return null;
+            
+            const upperStr = priceStr.toUpperCase().trim();
+            
+            // Check for POA/P.O.A
+            if (upperStr.includes('POA') || upperStr.includes('P.O.A') || upperStr === 'POA' || upperStr === 'P.O.A') {
+                return null;
+            }
+            
+            // Extract numbers (including decimals)
+            const match = upperStr.match(/(\d+[,\d]*\.?\d*)/);
+            if (!match) return null;
+            
+            // Remove commas and convert to number
+            const numberStr = match[0].replace(/,/g, '');
+            const numericPrice = parseFloat(numberStr);
+            
+            // Check if it's a valid number
+            if (isNaN(numericPrice) || !isFinite(numericPrice)) {
+                return null;
+            }
+            
+            return numericPrice;
+        }
+        
+        // Check for budget matches - PROFESSIONAL VERSION
+        async function checkBudgetMatches(min, max) {
+            if (isChecking) return;
+            
+            if (!min && !max) {
+                budgetResults.style.display = 'none';
+                findCarsBtn.innerHTML = `<i class="fas fa-search me-2"></i>Find Available Cars`;
+                return;
+            }
+            
+            try {
+                isChecking = true;
+                
+                // Show loading
+                findCarsBtn.disabled = true;
+                findCarsBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking availability...';
+                
+                // Build query parameters WITHOUT price filters initially
+                const params = new URLSearchParams();
+                
+                // Add other filters
+                const vehicleType = document.getElementById('vehicleType').value;
+                if (vehicleType) {
+                    params.append('bodyTypes', vehicleType);
+                }
+                
+                const yearRange = document.getElementById('yearRange').value;
+                if (yearRange) {
+                    const [minYear, maxYear] = yearRange.split('-').map(Number);
+                    params.append('minYear', minYear);
+                    params.append('maxYear', maxYear);
+                }
+                
+                // Set high limit to get enough cars for accurate filtering
+                params.append('limit', '500');
+                
+                console.log('💰 Checking budget matches with params:', Object.fromEntries(params));
+                
+                // Fetch cars (without price filters - we'll filter client-side)
+                const response = await fetch(`/api/cars?${params}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const allCars = data.cars || [];
+                    
+                    // Apply client-side price filtering for 100% accuracy
+                    let matches = 0;
+                    const minPrice = min ? parseFloat(min) : null;
+                    const maxPrice = max ? parseFloat(max) : null;
+                    
+                    allCars.forEach(car => {
+                        const priceStr = car.price || '';
+                        const numericPrice = extractNumericPrice(priceStr);
+                        
+                        if (numericPrice === null) {
+                            return; // Skip POA/unknown prices
+                        }
+                        
+                        let passes = true;
+                        
+                        if (minPrice !== null && numericPrice < minPrice) {
+                            passes = false;
+                        }
+                        
+                        if (maxPrice !== null && numericPrice > maxPrice) {
+                            passes = false;
+                        }
+                        
+                        if (passes) {
+                            matches++;
+                        }
+                    });
+                    
+                    console.log(`✅ Found ${matches} matches for budget N$${min || '0'} - N$${max || 'Any'} (from ${allCars.length} filtered cars)`);
+                    
+                    // Update results display
+                    matchCount.textContent = matches;
+                    carsCountText.textContent = `${matches} Car${matches !== 1 ? 's' : ''} Found`;
+                    
+                    let rangeText = '';
+                    if (min && max) {
+                        rangeText = `Cars between N$${parseInt(min).toLocaleString()} - N$${parseInt(max).toLocaleString()}`;
+                    } else if (min) {
+                        rangeText = `Cars above N$${parseInt(min).toLocaleString()}`;
+                    } else if (max) {
+                        rangeText = `Cars under N$${parseInt(max).toLocaleString()}`;
+                    }
+                    budgetRangeText.textContent = rangeText;
+                    
+                    // Show results
+                    budgetResults.style.display = 'block';
+                    
+                    // Update button
+                    findCarsBtn.disabled = false;
+                    
+                    if (matches > 0) {
+                        findCarsBtn.innerHTML = `<i class="fas fa-search me-2"></i>View ${matches} Matching Car${matches !== 1 ? 's' : ''}`;
+                    } else {
+                        findCarsBtn.innerHTML = `<i class="fas fa-search me-2"></i>Find Available Cars`;
+                    }
+                    
+                } else {
+                    console.error('❌ API returned error:', response.status);
+                    resetBudgetUI();
+                }
+                
+            } catch (error) {
+                console.error('❌ Error checking budget matches:', error);
+                resetBudgetUI();
+            } finally {
+                isChecking = false;
+            }
+        }
+        
+        function resetBudgetUI() {
+            findCarsBtn.disabled = false;
+            findCarsBtn.innerHTML = `<i class="fas fa-search me-2"></i>Find Available Cars`;
+            budgetResults.style.display = 'none';
+        }
+        
+        // Find cars button click - redirect to view page with budget filters
+        findCarsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const minBudget = minBudgetInput.value;
+            const maxBudget = maxBudgetInput.value;
+            const vehicleType = document.getElementById('vehicleType').value;
+            const yearRange = document.getElementById('yearRange').value;
+            
+            // Validate that at least one budget value is set
+            if (!minBudget && !maxBudget) {
+                alert('Please enter at least a minimum or maximum budget');
+                return;
+            }
+            
+            // Validate numeric values
+            if (minBudget && isNaN(parseFloat(minBudget))) {
+                alert('Please enter a valid minimum budget amount');
+                minBudgetInput.focus();
+                return;
+            }
+            
+            if (maxBudget && isNaN(parseFloat(maxBudget))) {
+                alert('Please enter a valid maximum budget amount');
+                maxBudgetInput.value = '';
+                maxBudgetInput.focus();
+                return;
+            }
+            
+            // Validate range
+            if (minBudget && maxBudget && parseFloat(minBudget) > parseFloat(maxBudget)) {
+                alert('Minimum budget cannot be greater than maximum budget');
+                minBudgetInput.focus();
+                return;
+            }
+            
+            // Store budget filters in localStorage for view page
+            const budgetFilters = {
+                minPrice: minBudget,
+                maxPrice: maxBudget,
+                bodyType: vehicleType,
+                yearRange: yearRange,
+                // Add timestamp to ensure fresh results
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem('budgetFilters', JSON.stringify(budgetFilters));
+            
+            // Build URL parameters for view page
+            const urlParams = new URLSearchParams();
+            if (minBudget) urlParams.append('minPrice', minBudget);
+            if (maxBudget) urlParams.append('maxPrice', maxBudget);
+            if (vehicleType) urlParams.append('bodyTypes', vehicleType);
+            if (yearRange) {
+                const [minYear, maxYear] = yearRange.split('-').map(Number);
+                urlParams.append('minYear', minYear);
+                urlParams.append('maxYear', maxYear);
+            }
+            
+            // Add budget flag for view page to know this is a budget search
+            urlParams.append('budgetSearch', 'true');
+            
+            // Redirect to view page
+            window.location.href = `/view?${urlParams.toString()}`;
+        });
+        
+        // Real-time validation and matching with debouncing
+        let checkTimeout;
+        function validateAndCheck() {
+            clearTimeout(checkTimeout);
+            checkTimeout = setTimeout(() => {
+                const min = minBudgetInput.value;
+                const max = maxBudgetInput.value;
+                
+                // Validate inputs
+                if (min && max && parseFloat(min) > parseFloat(max)) {
+                    alert('Minimum budget cannot be greater than maximum budget');
+                    minBudgetInput.focus();
+                    return;
+                }
+                
+                // If inputs are valid, check matches
+                if ((min && !isNaN(parseFloat(min))) || (max && !isNaN(parseFloat(max)))) {
+                    checkBudgetMatches(min, max);
+                } else {
+                    budgetResults.style.display = 'none';
+                    findCarsBtn.innerHTML = `<i class="fas fa-search me-2"></i>Find Available Cars`;
+                }
+            }, 800); // Increased debounce time for better UX
+        }
+        
+        // Add input listeners
+        minBudgetInput.addEventListener('input', function() {
+            // Remove active class from quick buttons when typing manually
+            budgetQuickBtns.forEach(btn => btn.classList.remove('active'));
+            validateAndCheck();
+        });
+        
+        maxBudgetInput.addEventListener('input', function() {
+            // Remove active class from quick buttons when typing manually
+            budgetQuickBtns.forEach(btn => btn.classList.remove('active'));
+            validateAndCheck();
+        });
+        
+        document.getElementById('vehicleType').addEventListener('change', function() {
+            validateAndCheck();
+        });
+        
+        document.getElementById('yearRange').addEventListener('change', function() {
+            validateAndCheck();
+        });
+        
+        // Initialize
+        loadTotalCarsCount();
+        
+        // Check for existing budget filters (if coming back from view page)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('budget')) {
+            const savedFilters = localStorage.getItem('budgetFilters');
+            if (savedFilters) {
+                try {
+                    const filters = JSON.parse(savedFilters);
+                    const now = Date.now();
+                    const filterAge = now - (filters.timestamp || 0);
+                    
+                    // Only use filters if they're less than 5 minutes old
+                    if (filterAge < 5 * 60 * 1000) {
+                        minBudgetInput.value = filters.minPrice || '';
+                        maxBudgetInput.value = filters.maxPrice || '';
+                        if (filters.bodyType) {
+                            document.getElementById('vehicleType').value = filters.bodyType;
+                        }
+                        if (filters.yearRange) {
+                            document.getElementById('yearRange').value = filters.yearRange;
+                        }
+                        
+                        // Check matches with saved filters
+                        setTimeout(() => {
+                            checkBudgetMatches(filters.minPrice, filters.maxPrice);
+                        }, 800);
+                        
+                        // Scroll to budget section
+                        document.querySelector('.budget-section').scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        // Clear old filters
+                        localStorage.removeItem('budgetFilters');
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved filters:', e);
+                    localStorage.removeItem('budgetFilters');
+                }
+            }
+        }
+        
+        // Clear quick buttons when manually editing
+        minBudgetInput.addEventListener('focus', function() {
+            budgetQuickBtns.forEach(btn => btn.classList.remove('active'));
+        });
+        
+        maxBudgetInput.addEventListener('focus', function() {
+            budgetQuickBtns.forEach(btn => btn.classList.remove('active'));
+        });
+    });
+    </script>
+
+<script>
+// Navigation script for all pages
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadNavigation();
+});
+
+async function loadNavigation() {
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        const navbarContent = document.getElementById('navbarContent') || document.querySelector('.navbar-collapse');
+        
+        if (!navbarContent) return;
+        
+        if (data.authenticated) {
+            // User is logged in - show user dropdown
+            navbarContent.innerHTML = `
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i> ${data.user.name}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
+                            <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                            <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            `;
+        } else {
+            // User is not logged in - show login/register
+            navbarContent.innerHTML = `
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/login') ? 'active' : ''}" href="/login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/register') ? 'active' : ''}" href="/register">Register</a></li>
+                </ul>
+            `;
+        }
+        
+        // Initialize Bootstrap dropdown
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+    } catch (error) {
+        console.error('Error loading navigation:', error);
+    }
+}
+
+async function logoutUser() {
+    try {
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
+</script>
+
+</body>
+</html>

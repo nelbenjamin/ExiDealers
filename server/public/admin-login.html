@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Exi Dealers</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            width: 320px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-container:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.5);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1e3c72;
+            font-weight: 700;
+        }
+        .password-container {
+            position: relative;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding-right: 45px; /* Space for the toggle button */
+        }
+        input:focus {
+            outline: none;
+            border-color: #1565c0;
+            box-shadow: 0 0 8px rgba(21, 101, 192, 0.4);
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-password:hover {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .toggle-password:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        .toggle-password i {
+            font-size: 0.9rem;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            box-shadow: 0 4px 10px rgba(25, 118, 210, 0.4);
+            transform: scale(1.02);
+        }
+        .error {
+            color: #d32f2f;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 20px;
+        }
+    </style>
+    <!-- Font Awesome for eye icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Admin Login For Exi Dealers</h2>
+        <form id="loginForm">
+            <div class="password-container">
+                <input type="password" id="password" placeholder="Enter admin password" required>
+                <button type="button" class="toggle-password" id="togglePassword">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const errorDiv = document.getElementById('error');
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Update eye icon
+            const icon = this.querySelector('i');
+            if (type === 'text') {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                this.setAttribute('title', 'Hide password');
+            } else {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                this.setAttribute('title', 'Show password');
+            }
+        });
+
+        // Allow Enter key to submit form
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Clear error when user starts typing
+        passwordInput.addEventListener('input', function() {
+            if (errorDiv.textContent) {
+                errorDiv.textContent = '';
+            }
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = passwordInput.value;
+            
+            if (!password) {
+                errorDiv.textContent = 'Please enter a password';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/verify-token', {
+                    headers: {
+                        'admin-token': password
+                    }
+                });
+                
+                if (response.ok) {
+                    // Store token in sessionStorage and redirect to dashboard
+                    sessionStorage.setItem('adminToken', password);
+                    window.location.href = `/admin/dashboard?token=${encodeURIComponent(password)}`;
+                } else {
+                    errorDiv.textContent = 'Invalid password';
+                    // Clear password field on error
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Login failed. Please check your connection and try again.';
+            }
+        });
+
+        // Focus on password input when page loads
+        passwordInput.focus();
+    </script>
+</body>
+</html>

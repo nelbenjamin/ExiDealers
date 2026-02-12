@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Details | Exi Dealers</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1669192747799799');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+  <script>
+    // Force favicon update
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) {
+        // Add timestamp to bypass cache
+        const timestamp = new Date().getTime();
+        favicon.href = 'favicon.png?' + timestamp;
+        
+        // Create new link element as backup
+        const newFavicon = document.createElement('link');
+        newFavicon.rel = 'icon';
+        newFavicon.href = 'favicon.png?' + timestamp;
+        newFavicon.type = 'image/png';
+        document.head.appendChild(newFavicon);
+    }
+</script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    /* Blue theme - matching navigation color */
+    :root {
+      --primary-blue: #1a365d; /* Dark blue matching navigation */
+      --secondary-blue: #2c5282; /* Slightly lighter blue */
+      --accent-blue: #3182ce; /* Accent blue */
+    }
+    
+    /* Footer should remain solid dark */
+    .footer {
+        background: #1a1a1a !important;
+    }
+    
+
+    /* Background for all pages */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1800&q=80') no-repeat center center;
+        background-size: cover;
+        z-index: -2;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+        filter: brightness(0.8);
+    }
+    
+    body.background-loaded::before {
+        opacity: 0.8;
+    }
+    
+    /* Ensure content has proper background */
+    .bg-white, .bg-light, .card {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .modal-content {
+        background-color: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    /* Car Details Specific Styles */
+    .car-details-container {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .car-gallery {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    
+    .main-car-image {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    
+    .thumbnail-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .thumbnail {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .thumbnail.active, .thumbnail:hover {
+        border-color: var(--primary-blue);
+    }
+    
+    .car-specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 25px 0;
+    }
+    
+    .spec-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-blue);
+    }
+    
+    .spec-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-blue);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 15px;
+        font-size: 1.1rem;
+    }
+    
+    .spec-content h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .spec-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .price-section {
+        background: var(--primary-blue);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 30px 0;
+    }
+    
+    .price-amount {
+        font-size: 2.5rem; /* Reduced from 3rem */
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .price-label {
+        font-size: 1rem; /* Reduced from 1.1rem */
+        opacity: 0.9;
+    }
+    
+    .enquiry-form {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        margin-top: 40px;
+    }
+    
+    /* Description Grid Layout */
+    .description-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .description-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-blue);
+    }
+    
+    /* Fullscreen Image Gallery */
+    .fullscreen-gallery {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .fullscreen-gallery.active {
+        display: flex;
+    }
+    
+    .fullscreen-image {
+        max-width: 90%;
+        max-height: 90vh;
+        object-fit: contain;
+    }
+    
+    .gallery-controls {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+    }
+    
+    .gallery-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        transform: translateY(-50%);
+        z-index: 10000;
+    }
+    
+    .gallery-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .gallery-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+    
+    .image-counter {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Toast styling */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+    
+    /* Side Modals */
+    .side-modal {
+        position: fixed;
+        top: 0;
+        right: -450px;
+        width: 420px;
+        height: 100vh;
+        background: white;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: right 0.3s ease-in-out;
+        z-index: 9999;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    
+    .side-modal.active {
+        right: 0;
+    }
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(5px);
+        z-index: 9998;
+        display: none;
+    }
+    
+    .modal-overlay.active {
+        display: block;
+    }
+    
+    /* Share Modal Styles */
+    .share-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .share-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .share-option:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .share-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .share-option.whatsapp .share-icon { color: #25D366; }
+    .share-option.facebook .share-icon { color: #1877F2; }
+    .share-option.twitter .share-icon { color: #1DA1F2; }
+    .share-option.instagram .share-icon { color: #E4405F; }
+    .share-option.email .share-icon { color: #EA4335; }
+    
+    /* Car Name Display Section */
+    .car-name-display {
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 1.5rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 76px; /* This matches the navbar height */
+    }
+    
+    .car-name-display h1 {
+        font-size: 2rem; /* Reduced from 2.5rem */
+        margin-bottom: 0.5rem;
+    }
+    
+    .car-name-display .price {
+        font-size: 1.5rem; /* Reduced from 1.8rem */
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+    
+    .car-description-text {
+        font-size: 1rem; /* Reduced from 1.1rem */
+        opacity: 0.9;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+    
+    /* Fix space issues - override styles.css padding */
+    body {
+        padding-top: 0 !important;
+    }
+    
+    .car-details-content {
+        margin-top: 0 !important;
+    }
+    
+    /* Favorite button styles */
+    .favorite-btn.favorited {
+        color: #dc3545 !important;
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+
+    .navbar-brand img {
+        filter: brightness(0) invert(1);
+        height: 60px !important; /* Increased to match index page */
+        width: auto;
+    }
+
+    /* NEW: Increased header/navigation size to match index page */
+    .navbar {
+        padding-top: 0.7rem; /* Increased to match index page */
+        padding-bottom: 0.7rem; /* Increased to match index page */
+        min-height: 80px; /* Increased to match index page */
+    }
+
+    .nav-link {
+        font-size: 1rem !important; /* Increased to match index page */
+        padding: 0.6rem 1rem !important; /* Increased padding to match index page */
+        font-weight: 600 !important; /* Added font weight for better visibility */
+    }
+
+    /* NEW: Reduced card header text sizes */
+    .card-header h5 {
+        font-size: 1.2rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced form label sizes */
+    .form-label {
+        font-size: 0.95rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced seller info text sizes */
+    .card-body p {
+        font-size: 0.95rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced enquiry form heading */
+    .enquiry-form h4 {
+        font-size: 1.3rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced side modal text sizes */
+    .side-modal h4 {
+        font-size: 1.3rem !important; /* Reduced size */
+    }
+
+    .side-modal p {
+        font-size: 0.95rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced share option text sizes */
+    .share-option span {
+        font-size: 0.9rem !important; /* Reduced size */
+    }
+
+    /* NEW: Consistent footer text sizes */
+    .footer h5 {
+        font-size: 1.1rem !important; /* Consistent heading size */
+        margin-bottom: 1rem !important;
+    }
+
+    .footer p, .footer li, .footer a {
+        font-size: 0.9rem !important; /* Consistent text size */
+    }
+
+    /* NEW: Reduced lead text in car name display */
+    .car-name-display .lead {
+        font-size: 1rem !important; /* Reduced size */
+    }
+
+    /* NEW: Reduced button text sizes */
+    .btn {
+        font-size: 0.9rem !important; /* Reduced button text */
+    }
+
+    .btn-lg {
+        font-size: 1rem !important; /* Reduced large button text */
+    }
+</style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+            <img src="logo.png" alt="Exi Dealers Logo" style="height: 70px; width: auto;">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/view">Browse Cars</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Car Name Display Section -->
+  <section class="car-name-display">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 id="carName">2023 Toyota Corolla</h1>
+          <p class="lead mb-0" id="carLocation"><i class="fas fa-map-marker-alt me-2"></i>Windhoek, Namibia</p>
+          
+          <!-- Description -->
+          <div class="car-description-text mt-3">
+            View comprehensive details, specifications, and seller information for this premium vehicle. 
+            Get all the information you need to make an informed decision.
+          </div>
+          
+          <!-- Back to View Button -->
+          <button class="btn btn-outline-light mt-3" onclick="window.location.href='/view'">
+            <i class="fas fa-arrow-left me-2"></i>Back to Browse Cars
+          </button>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <div class="price text-warning" id="carPrice">N$ 245,000</div>
+          <div class="car-actions mt-2">
+            <button class="btn btn-outline-light favorite-btn" title="Add to favorites" id="favoriteButton">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="btn btn-outline-light" title="Share" onclick="openShareModal()">
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Car Details Content -->
+  <section class="py-3">
+    <div class="car-details-container">
+      <div class="row">
+        <!-- Car Images Gallery -->
+        <div class="col-lg-8">
+          <div class="car-gallery">
+            <img id="mainCarImage" src="" alt="Car Image" class="main-car-image" onclick="openFullscreenGallery(0)">
+            <div class="thumbnail-container" id="thumbnailContainer">
+              <!-- Thumbnails will be generated here -->
+            </div>
+          </div>
+
+          <!-- Vehicle Specifications -->
+          <div class="card mb-4">
+            <div class="card-header text-white" style="background-color: var(--primary-blue);">
+              <h5 class="mb-0"><i class="fas fa-list-alt me-2"></i>Vehicle Specifications</h5>
+            </div>
+            <div class="card-body">
+              <div class="car-specs-grid" id="carSpecs">
+                <!-- Specs will be generated here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Description -->
+          <div class="card mb-4">
+            <div class="card-header text-white" style="background-color: var(--primary-blue);">
+              <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Vehicle Description</h5>
+            </div>
+            <div class="card-body">
+              <div id="carDescription"></div>
+            </div>
+          </div>
+
+          <!-- Seller Information -->
+          <div class="card">
+            <div class="card-header text-white" style="background-color: var(--primary-blue);">
+              <h5 class="mb-0"><i class="fas fa-user me-2"></i>Seller Information</h5>
+            </div>
+            <div class="card-body">
+              <div class="row" id="sellerInfo">
+                <!-- Seller info will be generated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="col-lg-4">
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-amount" id="carPriceDisplay">N$0</div>
+            <div class="price-label">Asking Price</div>
+            
+            <!-- Price Alert Button -->
+            <button class="btn btn-outline-light w-100 mt-3" onclick="openPriceAlertModal()">
+              <i class="fas fa-bell me-2"></i>Set Price Alert
+            </button>
+          </div>
+
+          <!-- Message Seller Form -->
+          <div class="enquiry-form">
+            <h4 class="mb-4"><i class="fas fa-envelope me-2"></i>Message Seller</h4>
+            <form id="carEnquiryForm">
+              <input type="hidden" id="enquiryCarId">
+              <input type="hidden" id="enquiryCarName">
+              
+              <div class="mb-3">
+                <label for="enquiryFullName" class="form-label">Full Name *</label>
+                <input type="text" class="form-control" id="enquiryFullName" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="enquiryEmail" class="form-label">Email Address *</label>
+                <input type="email" class="form-control" id="enquiryEmail" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="enquiryPhone" class="form-label">Phone Number *</label>
+                <input type="tel" class="form-control" id="enquiryPhone" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="enquiryMessage" class="form-label">Your Message *</label>
+                <textarea class="form-control" id="enquiryMessage" rows="5" required></textarea>
+                <div class="form-text">
+                  Default message will be generated based on the car. You can edit it as needed.
+                </div>
+              </div>
+              
+              <button type="submit" class="btn w-100 btn-lg" style="background-color: var(--primary-blue); color: white;">
+                <i class="fas fa-paper-plane me-2"></i>Send Message
+              </button>
+            </form>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card mt-4">
+            <div class="card-body text-center">
+              <button class="btn btn-outline-warning mb-2 w-100" onclick="openPriceAlertModal()">
+                <i class="fas fa-bell me-2"></i>Set Price Alert
+              </button>
+              <button class="btn btn-outline-info w-100" onclick="openShareModal()">
+                <i class="fas fa-share-alt me-2"></i>Share This Car
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fullscreen Image Gallery -->
+  <div class="fullscreen-gallery" id="fullscreenGallery">
+    <div class="gallery-controls">
+      <button class="gallery-btn" onclick="closeFullscreenGallery()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="gallery-nav">
+      <button class="gallery-btn" onclick="navigateFullscreenImage(-1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="gallery-btn" onclick="navigateFullscreenImage(1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    
+    <img class="fullscreen-image" id="fullscreenImage" src="" alt="Fullscreen Car Image">
+    
+    <div class="image-counter" id="fullscreenCounter">1/1</div>
+  </div>
+
+  <!-- Price Alert Modal -->
+  <div class="modal-overlay" id="priceAlertOverlay"></div>
+  <div class="side-modal" id="priceAlertModal">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4><i class="fas fa-bell me-2"></i>Set Price Alert</h4>
+      <button class="btn-close" onclick="closePriceAlertModal()"></button>
+    </div>
+    
+    <p>Be the first to know when this car (or similar ones) drops in price. Enter your details and we'll alert you instantly.</p>
+    
+    <form id="priceAlertForm">
+      <input type="hidden" id="alertCarId">
+      <input type="hidden" id="alertCarMake">
+      <input type="hidden" id="alertCarModel">
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="alertFirstName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="alertFirstName" required placeholder="Enter first name">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="alertLastName" class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="alertLastName" required placeholder="Enter last name">
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="alertPhone" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="alertPhone" required placeholder="Enter phone number">
+      </div>
+      
+      <div class="mb-3">
+        <label for="alertEmail" class="form-label">Your Email</label>
+        <input type="email" class="form-control" id="alertEmail" required placeholder="Enter your email">
+      </div>
+      
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="similarCars" checked>
+        <label class="form-check-label" for="similarCars">Also alert me about similar cars</label>
+      </div>
+      
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-secondary" onclick="closePriceAlertModal()">Cancel</button>
+        <button type="button" class="btn btn-warning" onclick="submitPriceAlert()">Send Me Alerts</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareOverlay"></div>
+  <div class="side-modal" id="shareModal">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4><i class="fas fa-share-alt me-2"></i>Share This Car</h4>
+      <button class="btn-close" onclick="closeShareModal()"></button>
+    </div>
+    
+    <div class="text-center mb-4">
+      <img id="shareCarImage" src="" alt="Car Image" class="img-fluid rounded mb-3" style="max-height: 150px; object-fit: cover;">
+      <h5 id="shareCarName">Car Name</h5>
+      <p class="text-muted" id="shareCarPrice">N$0</p>
+    </div>
+    
+    <div class="share-options">
+      <a href="#" class="share-option whatsapp" onclick="shareOnWhatsApp(event)">
+        <div class="share-icon">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <span>WhatsApp</span>
+      </a>
+      
+      <a href="#" class="share-option facebook" onclick="shareOnFacebook(event)">
+        <div class="share-icon">
+          <i class="fab fa-facebook"></i>
+        </div>
+        <span>Facebook</span>
+      </a>
+      
+      <a href="#" class="share-option twitter" onclick="shareOnTwitter(event)">
+        <div class="share-icon">
+          <i class="fab fa-twitter"></i>
+        </div>
+        <span>Twitter</span>
+      </a>
+      
+      <a href="#" class="share-option instagram" onclick="shareOnInstagram(event)">
+        <div class="share-icon">
+          <i class="fab fa-instagram"></i>
+        </div>
+        <span>Instagram</span>
+      </a>
+      
+      <a href="#" class="share-option email" onclick="shareViaEmail(event)">
+        <div class="share-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <span>Email</span>
+      </a>
+      
+      <div class="share-option" onclick="copyLink()">
+        <div class="share-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <span>Copy Link</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  let currentCar = null;
+let currentImages = [];
+let currentFullscreenIndex = 0;
+
+// DOM Ready
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('🚗 Car details page loaded');
+    
+    // Make the background emerge
+    setTimeout(() => {
+        document.body.classList.add('background-loaded');
+    }, 100);
+    
+    // Get car ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const carId = urlParams.get('id');
+    
+    if (carId) {
+        loadCarDetails(carId);
+    } else {
+        showError('No car specified');
+    }
+    
+    // Setup enquiry form
+    setupEnquiryForm();
+    
+    // Setup favorite button
+    setupFavoriteButton();
+});
+
+async function loadCarDetails(carId) {
+    try {
+        const response = await fetch(`/api/cars/${carId}`);
+        if (!response.ok) {
+            throw new Error('Car not found');
+        }
+        
+        const car = await response.json();
+        currentCar = car;
+        displayCarDetails(car);
+        
+    } catch (error) {
+        console.error('Error loading car details:', error);
+        showError('Car not found or unable to load details');
+    }
+}
+
+function displayCarDetails(car) {
+    // Update page title and header
+    document.title = `${car.year} ${car.make} ${car.model} | Exi Dealers`;
+    
+    // Update car name display section
+    document.getElementById('carName').textContent = `${car.year} ${car.make} ${car.model}`;
+    document.getElementById('carLocation').innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${car.location}`;
+    
+    // FIXED: Display price exactly as entered from admin page
+    document.getElementById('carPrice').textContent = formatPrice(car.price);
+    
+    // Handle images
+    currentImages = car.images || [];
+    displayCarImages();
+    
+    // FIXED: Display price exactly as entered from admin page
+    document.getElementById('carPriceDisplay').textContent = formatPrice(car.price);
+    
+    // Display specifications
+    displayCarSpecs(car);
+    
+    // Display description
+    displayCarDescription(car);
+    
+    // Display seller information
+    displaySellerInfo(car);
+    
+    // Set up enquiry form
+    document.getElementById('enquiryCarId').value = car.id;
+    document.getElementById('enquiryCarName').value = `${car.year} ${car.make} ${car.model}`;
+    updateDefaultMessage(car);
+    
+    // Set up share modal data
+    document.getElementById('shareCarName').textContent = `${car.year} ${car.make} ${car.model}`;
+    // FIXED: Display price exactly as entered from admin page
+    document.getElementById('shareCarPrice').textContent = formatPrice(car.price);
+    if (currentImages.length > 0) {
+        const primaryImage = currentImages.find(img => img.isPrimary) || currentImages[0];
+        document.getElementById('shareCarImage').src = primaryImage.imageUrl;
+    }
+    
+    // Set up price alert modal data
+    document.getElementById('alertCarId').value = car.id;
+    document.getElementById('alertCarMake').value = car.make;
+    document.getElementById('alertCarModel').value = car.model;
+    
+    // Check if car is already favorited
+    checkFavoriteStatus(car.id);
+}
+
+// FIXED: Function to display price exactly as entered from admin page
+function formatPrice(price) {
+    if (price === null || price === undefined) {
+        return 'N/A';
+    }
+    // Always return as string, exactly as entered
+    return price.toString();
+}
+
+function displayCarImages() {
+    const mainImage = document.getElementById('mainCarImage');
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    
+    if (currentImages.length > 0) {
+        const primaryImage = currentImages.find(img => img.isPrimary) || currentImages[0];
+        mainImage.src = primaryImage.imageUrl;
+        
+        // Generate thumbnails
+        thumbnailContainer.innerHTML = '';
+        currentImages.forEach((image, index) => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = image.imageUrl;
+            thumbnail.alt = `Thumbnail ${index + 1}`;
+            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+            thumbnail.onclick = () => changeMainImage(index);
+            thumbnailContainer.appendChild(thumbnail);
+        });
+    } else {
+        mainImage.src = 'https://via.placeholder.com/800x500?text=No+Image+Available';
+    }
+}
+
+function changeMainImage(index) {
+    const mainImage = document.getElementById('mainCarImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    
+    mainImage.src = currentImages[index].imageUrl;
+    
+    thumbnails.forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+    });
+}
+
+function displayCarSpecs(car) {
+    const specsContainer = document.getElementById('carSpecs');
+    
+    // Capitalize condition
+    const condition = car.condition ? 
+        car.condition.charAt(0).toUpperCase() + car.condition.slice(1) : 'N/A';
+    
+    const specs = [
+        { icon: 'fas fa-tachometer-alt', label: 'Mileage', value: `${car.mileage.toLocaleString()} km` },
+        { icon: 'fas fa-calendar', label: 'Year', value: car.year },
+        { icon: 'fas fa-car', label: 'Body Type', value: car.bodyType || 'N/A' },
+        { icon: 'fas fa-cog', label: 'Transmission', value: car.transmission || 'N/A' },
+        { icon: 'fas fa-gas-pump', label: 'Fuel Type', value: car.fuelType || 'N/A' },
+        { icon: 'fas fa-cogs', label: 'Drive Type', value: car.driveType || 'N/A' },
+        { icon: 'fas fa-star', label: 'Condition', value: condition },
+        { icon: 'fas fa-map-marker-alt', label: 'Location', value: car.location }
+    ];
+    
+    specsContainer.innerHTML = specs.map(spec => `
+        <div class="spec-item">
+            <div class="spec-icon">
+                <i class="${spec.icon}"></i>
+            </div>
+            <div class="spec-content">
+                <h6>${spec.label}</h6>
+                <p>${spec.value}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function displayCarDescription(car) {
+    const descriptionContainer = document.getElementById('carDescription');
+    
+    if (car.description && (car.description.includes('•') || car.description.split('\n').length > 3)) {
+        // Treat as bullet points
+        const lines = car.description.split('\n').filter(line => line.trim());
+        descriptionContainer.innerHTML = `
+            <div class="description-grid">
+                ${lines.map(line => `
+                    <div class="description-item">
+                        <i class="fas fa-check text-success me-2"></i>
+                        ${line.replace('•', '').trim()}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } else if (car.description) {
+        // Treat as paragraph
+        descriptionContainer.innerHTML = `<p class="lead">${car.description}</p>`;
+    } else {
+        descriptionContainer.innerHTML = '<p class="text-muted">No description available for this vehicle.</p>';
+    }
+}
+
+function displaySellerInfo(car) {
+    const sellerContainer = document.getElementById('sellerInfo');
+    
+    sellerContainer.innerHTML = `
+        <div class="col-md-6">
+            <p><strong>Seller Name:</strong> ${car.sellerName || 'N/A'}</p>
+            <p><strong>Email:</strong> ${car.sellerEmail || 'N/A'}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Phone:</strong> ${car.sellerPhone || 'N/A'}</p>
+            <p><strong>Preferred Contact:</strong> ${car.preferredContact || 'Email'}</p>
+        </div>
+    `;
+}
+
+function updateDefaultMessage(car) {
+    const messageTextarea = document.getElementById('enquiryMessage');
+    const defaultMessage = `I would like to check the availability or enquire about the ${car.year} ${car.make} ${car.model}. Please contact me with more information.`;
+    messageTextarea.value = defaultMessage;
+}
+
+// Favorite Button Functionality
+function setupFavoriteButton() {
+    const favoriteBtn = document.getElementById('favoriteButton');
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', toggleFavorite);
+    }
+}
+
+function checkFavoriteStatus(carId) {
+    const favorites = JSON.parse(localStorage.getItem('favoriteCars')) || [];
+    const favoriteBtn = document.getElementById('favoriteButton');
+    
+    if (favorites.includes(carId)) {
+        favoriteBtn.classList.add('favorited');
+    } else {
+        favoriteBtn.classList.remove('favorited');
+    }
+}
+
+function toggleFavorite() {
+    if (!currentCar) return;
+    
+    const favorites = JSON.parse(localStorage.getItem('favoriteCars')) || [];
+    const favoriteBtn = document.getElementById('favoriteButton');
+    const carId = currentCar.id;
+    
+    const index = favorites.indexOf(carId);
+    
+    if (index > -1) {
+        // Remove from favorites
+        favorites.splice(index, 1);
+        favoriteBtn.classList.remove('favorited');
+        showToast('Removed from favorites');
+    } else {
+        // Add to favorites
+        favorites.push(carId);
+        favoriteBtn.classList.add('favorited');
+        showToast('Added to favorites');
+    }
+    
+    localStorage.setItem('favoriteCars', JSON.stringify(favorites));
+}
+
+// Price Alert Modal Functions
+function openPriceAlertModal() {
+    document.getElementById('priceAlertModal').classList.add('active');
+    document.getElementById('priceAlertOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePriceAlertModal() {
+    document.getElementById('priceAlertModal').classList.remove('active');
+    document.getElementById('priceAlertOverlay').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+async function submitPriceAlert() {
+    const firstName = document.getElementById('alertFirstName').value;
+    const lastName = document.getElementById('alertLastName').value;
+    const phone = document.getElementById('alertPhone').value;
+    const email = document.getElementById('alertEmail').value;
+    const carId = document.getElementById('alertCarId').value;
+    const carMake = document.getElementById('alertCarMake').value;
+    const carModel = document.getElementById('alertCarModel').value;
+    const similarCars = document.getElementById('similarCars').checked;
+    
+    if (!firstName || !lastName || !phone || !email || !email.includes('@')) {
+        alert('Please fill in all required fields with valid information');
+        return;
+    }
+    
+    try {
+        const backendAlert = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            carId: carId,
+            carMake: carMake,
+            carModel: carModel,
+            carYear: currentCar ? currentCar.year : null,
+            carPrice: currentCar ? currentCar.price : 0,
+            carMileage: currentCar ? currentCar.mileage : null,
+            carLocation: currentCar ? currentCar.location : null,
+            similarCars: similarCars
+        };
+        
+        // Send to backend API
+        const response = await fetch('/api/price-alerts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(backendAlert)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to save price alert');
+        }
+        
+        const result = await response.json();
+        console.log('✅ Price alert saved to backend:', result);
+        
+        showToast('Price alert set successfully!');
+        closePriceAlertModal();
+        document.getElementById('priceAlertForm').reset();
+        
+    } catch (error) {
+        console.error('Error setting price alert:', error);
+        alert('There was an error setting your price alert: ' + error.message);
+    }
+}
+
+// Share Modal Functions
+function openShareModal() {
+    document.getElementById('shareModal').classList.add('active');
+    document.getElementById('shareOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').classList.remove('active');
+    document.getElementById('shareOverlay').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function getShareUrl() {
+    return `${window.location.origin}/car-details.html?id=${currentCar.id}`;
+}
+
+function getShareText() {
+    // FIXED: Use the formatted price for sharing
+    return `Check out this ${currentCar.year} ${currentCar.make} ${currentCar.model} for ${formatPrice(currentCar.price)} on Exi Dealers`;
+}
+
+function shareOnWhatsApp(e) {
+    e.preventDefault();
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(getShareText() + ' ' + getShareUrl())}`;
+    window.open(url, '_blank');
+}
+
+function shareOnFacebook(e) {
+    e.preventDefault();
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+    window.open(url, '_blank');
+}
+
+function shareOnTwitter(e) {
+    e.preventDefault();
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}&url=${encodeURIComponent(getShareUrl())}`;
+    window.open(url, '_blank');
+}
+
+function shareOnInstagram(e) {
+    e.preventDefault();
+    // Instagram doesn't have a direct share API, so we'll redirect to Instagram
+    // In a real implementation, you might want to use Instagram's sharing capabilities
+    // For now, we'll redirect to Instagram
+    window.open('https://www.instagram.com/', '_blank');
+}
+
+function shareViaEmail(e) {
+    e.preventDefault();
+    const subject = `Check out this ${currentCar.year} ${currentCar.make} ${currentCar.model}`;
+    const body = `${getShareText()}\n\n${getShareUrl()}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(getShareUrl()).then(() => {
+        showToast('Link copied to clipboard!');
+        closeShareModal();
+    });
+}
+
+// Fullscreen Gallery Functions
+function openFullscreenGallery(index) {
+    if (currentImages.length === 0) return;
+    
+    currentFullscreenIndex = index;
+    const gallery = document.getElementById('fullscreenGallery');
+    const image = document.getElementById('fullscreenImage');
+    const counter = document.getElementById('fullscreenCounter');
+    
+    image.src = currentImages[currentFullscreenIndex].imageUrl;
+    counter.textContent = `${currentFullscreenIndex + 1}/${currentImages.length}`;
+    gallery.classList.add('active');
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFullscreenGallery() {
+    const gallery = document.getElementById('fullscreenGallery');
+    gallery.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function navigateFullscreenImage(direction) {
+    if (currentImages.length <= 1) return;
+    
+    currentFullscreenIndex = (currentFullscreenIndex + direction + currentImages.length) % currentImages.length;
+    
+    const image = document.getElementById('fullscreenImage');
+    const counter = document.getElementById('fullscreenCounter');
+    
+    image.src = currentImages[currentFullscreenIndex].imageUrl;
+    counter.textContent = `${currentFullscreenIndex + 1}/${currentImages.length}`;
+}
+
+// Close gallery on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeFullscreenGallery();
+        closePriceAlertModal();
+        closeShareModal();
+    }
+});
+
+function setupEnquiryForm() {
+    document.getElementById('carEnquiryForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            carId: document.getElementById('enquiryCarId').value,
+            carName: document.getElementById('enquiryCarName').value,
+            fullName: document.getElementById('enquiryFullName').value,
+            email: document.getElementById('enquiryEmail').value,
+            phone: document.getElementById('enquiryPhone').value,
+            message: document.getElementById('enquiryMessage').value,
+            createdAt: new Date().toISOString()
+        };
+        
+        try {
+            const response = await fetch('/api/car-enquiries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
+                showToast('Message sent successfully! The seller will contact you soon.');
+                document.getElementById('carEnquiryForm').reset();
+                updateDefaultMessage(currentCar);
+            } else {
+                throw new Error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending enquiry:', error);
+            showToast('Error sending message. Please try again.');
+        }
+    });
+}
+
+function showError(message) {
+    const container = document.querySelector('.car-details-container');
+    container.innerHTML = `
+        <div class="text-center py-5">
+            <div class="text-danger">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                <h3>Error Loading Car</h3>
+                <p>${message}</p>
+                <a href="/view" class="btn btn-dark mt-3">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Browse Cars
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+function showToast(message) {
+    let toastElement = document.getElementById('actionToast');
+    if (!toastElement) {
+        const toastContainer = document.createElement('div');
+        toastContainer.innerHTML = `
+            <div id="actionToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(toastContainer.firstElementChild);
+        toastElement = document.getElementById('actionToast');
+    }
+    
+    const toastBody = toastElement.querySelector('.toast-body');
+    toastBody.textContent = message;
+    
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+</script>
+
+<script>
+// Add this to all other pages for footer brand links
+document.addEventListener('DOMContentLoaded', function() {
+    // Footer brand links functionality
+    document.querySelectorAll('.footer a[href="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const brand = this.textContent.trim();
+            // Redirect to view page with brand filter
+            window.location.href = `/view?search=${encodeURIComponent(brand)}`;
+        });
+    });
+});
+</script>
+
+
+</body>
+
+ <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-car-luxury"></i> Exi Dealers</h5>
+                    <p>Your trusted partner for buying premium quality vehicles.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="view.html">Browse Cars</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Premium Brands</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Mercedes-Benz</a></li>
+                        <li><a href="#">BMW</a></li>
+                        <li><a href="#">Audi</a></li>
+                        <li><a href="#">Lexus</a></li>
+                        <li><a href="#">Land Rover</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Windhoek, Namibia</li>
+                        <li><i class="fas fa-phone me-2"></i> +264 (81) 267 5760</li>
+                        <li><i class="fas fa-envelope me-2"></i> sales@exidealers.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light" />
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <p>&copy; 2025 Exi Dealers. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</html>
