@@ -65,6 +65,7 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/car-enquiries', require('./routes/carEnquiries'));
 
 
+
 // Verify token endpoint
 app.get('/api/verify-token', (req, res) => {
     const token = req.headers['admin-token'];
@@ -165,6 +166,7 @@ app.use('/api/auth', require('./routes/auth').router);
 app.use('/api/user/favorites', require('./routes/userFavorites'));
 app.use('/api/user/saved', require('./routes/userSaved'));
 app.use('/api/user/alerts', require('./routes/userAlerts'));
+app.use('/api/user/activities', require('./routes/userActivity').router);
 
 // Add route for profile page
 app.get('/profile', (req, res) => {

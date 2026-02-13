@@ -368,14 +368,14 @@
     </nav>
 
     <!-- Profile Header -->
-    <section class="profile-header">
-        <div class="container text-center">
-            <div class="profile-avatar" id="userInitials">JD</div>
-            <h1 class="profile-name" id="userFullName">John Doe</h1>
-            <div class="profile-email" id="userEmail">john.doe@example.com</div>
-            <div class="profile-member-since" id="memberSince">Member since January 2025</div>
-        </div>
-    </section>
+<section class="profile-header">
+    <div class="container text-center">
+        <div class="profile-avatar" id="userInitials"></div>
+        <h1 class="profile-name" id="userFullName"></h1>
+        <div class="profile-email" id="userEmail"></div>
+        <div class="profile-member-since" id="memberSince"></div>
+    </div>
+</section>
 
     <!-- Dashboard Content -->
     <section class="dashboard-wrapper">
@@ -544,31 +544,45 @@
         });
 
         // ============= AUTHENTICATION =============
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/auth/status');
-                const data = await response.json();
-                
-                if (!data.authenticated) {
-                    // Redirect to login if not authenticated
-                    window.location.href = '/login';
-                    return;
-                }
-                
-                // Store user data
-                currentUser = data.user;
-                
-                // Update profile header
-                document.getElementById('userInitials').textContent = data.user.initials;
-                document.getElementById('userFullName').textContent = `${data.user.firstName} ${data.user.lastName}`;
-                document.getElementById('userEmail').textContent = data.user.email;
-                
-            } catch (error) {
-                console.error('Auth check error:', error);
-                window.location.href = '/login';
-            }
+        // ============= AUTHENTICATION =============
+async function checkAuth() {
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+            // Redirect to login if not authenticated
+            window.location.href = '/login';
+            return;
         }
-
+        
+        // Store user data
+        currentUser = data.user;
+        
+        // Update profile header with REAL user data - NO HARDCODING!
+        document.getElementById('userInitials').textContent = data.user.initials;
+        document.getElementById('userFullName').textContent = `${data.user.firstName} ${data.user.lastName}`;
+        document.getElementById('userEmail').textContent = data.user.email;
+        
+        // Fetch full profile to get createdAt date
+        const profileResponse = await fetch('/api/auth/profile');
+        const profileData = await profileResponse.json();
+        
+        if (profileData.createdAt) {
+            const memberDate = new Date(profileData.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long'
+            });
+            document.getElementById('memberSince').textContent = `Member since ${memberDate}`;
+        } else {
+            document.getElementById('memberSince').textContent = `Member`;
+        }
+        
+    } catch (error) {
+        console.error('Auth check error:', error);
+        window.location.href = '/login';
+    }
+}
         async function logoutUser() {
             try {
                 await fetch('/api/auth/logout', { method: 'POST' });
@@ -580,37 +594,47 @@
 
         // ============= NAVIGATION =============
         async function loadNavigation() {
-            try {
-                const response = await fetch('/api/auth/status');
-                const data = await response.json();
-                
-                const container = document.getElementById('userDropdownContainer');
-                
-                if (data.authenticated) {
-                    container.innerHTML = `
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <span class="user-initials">${data.user.initials}</span>
-                            ${data.user.firstName}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
-                            <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
-                            <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Sign In</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a></li>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error loading navigation:', error);
-            }
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        const container = document.getElementById('userDropdownContainer');
+        
+        if (data.authenticated && data.user) {
+            container.innerHTML = `
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                    <span class="user-initials" style="width: 35px; height: 35px; background: #ffc107; color: #1a365d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 5px;">
+                        ${data.user.initials || ''}
+                    </span>
+                    ${data.user.firstName || 'User'}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                    <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                    <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                    <li><a class="dropdown-item" href="/profile#recent"><i class="fas fa-history me-2"></i>Recent Activity</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            `;
+        } else {
+            container.innerHTML = `
+                <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Sign In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+            `;
         }
+        
+        // Initialize Bootstrap dropdown
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+    } catch (error) {
+        console.error('Error loading navigation:', error);
+    }
+}
 
         // ============= SECTION LOADING =============
         async function loadSection(section) {
@@ -647,58 +671,66 @@
 
         // ============= PROFILE SECTION =============
         async function getProfileHTML() {
-            try {
-                const response = await fetch('/api/auth/profile');
-                const user = await response.json();
-                
-                const memberDate = new Date(user.createdAt).toLocaleDateString('en-US', {
+    try {
+        const response = await fetch('/api/auth/profile');
+        const user = await response.json();
+        
+        // Fix: Check if createdAt exists and is valid
+        let memberDate = 'Unknown';
+        if (user.createdAt) {
+            const date = new Date(user.createdAt);
+            // Check if date is valid
+            if (!isNaN(date.getTime())) {
+                memberDate = date.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long'
                 });
-                
-                return `
-                    <div class="content-header">
-                        <h4><i class="fas fa-user me-2"></i>My Profile</h4>
-                    </div>
-                    
-                    <form id="profileForm" class="profile-form">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" value="${user.firstName}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" value="${user.lastName}" required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" value="${user.email}" readonly disabled>
-                            <div class="form-text">Email cannot be changed</div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" value="${user.phone || ''}" placeholder="Optional">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label">Member Since</label>
-                            <p class="form-control-static">${memberDate}</p>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Save Changes
-                        </button>
-                    </form>
-                `;
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                return '<div class="alert alert-danger">Failed to load profile</div>';
             }
         }
+        
+        return `
+            <div class="content-header">
+                <h4><i class="fas fa-user me-2"></i>My Profile</h4>
+            </div>
+            
+            <form id="profileForm" class="profile-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" value="${user.firstName || ''}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" value="${user.lastName || ''}" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" value="${user.email || ''}" readonly disabled>
+                    <div class="form-text">Email cannot be changed</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" value="${user.phone || ''}" placeholder="Optional">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Member Since</label>
+                    <p class="form-control-static fw-bold">${memberDate}</p>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </form>
+        `;
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        return '<div class="alert alert-danger">Failed to load profile</div>';
+    }
+}
 
         function initProfileForm() {
             const form = document.getElementById('profileForm');
@@ -745,68 +777,79 @@
 
         // ============= FAVORITES SECTION =============
         async function getFavoritesHTML() {
-            try {
-                const response = await fetch('/api/user/favorites');
-                const favorites = await response.json();
+    try {
+        const response = await fetch('/api/user/favorites');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const favorites = await response.json();
+        console.log('📊 Favorites loaded:', favorites);
+        
+        let html = `
+            <div class="content-header">
+                <h4><i class="fas fa-heart me-2"></i>Favorite Cars</h4>
+            </div>
+        `;
+        
+        if (!favorites || favorites.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <i class="fas fa-heart" style="font-size: 48px; color: #dee2e6;"></i>
+                    <h5 class="mt-3">No Favorite Cars Yet</h5>
+                    <p class="text-muted">Start adding cars to your favorites by clicking the heart icon on any car</p>
+                    <a href="/view" class="btn btn-primary mt-3">
+                        <i class="fas fa-search me-2"></i>Browse Cars
+                    </a>
+                </div>
+            `;
+        } else {
+            html += '<div class="row">';
+            
+            favorites.forEach(car => {
+                const primaryImage = car.images?.find(img => img.isPrimary)?.imageUrl || 
+                                    car.images?.[0]?.imageUrl || 
+                                    'https://via.placeholder.com/300x200?text=No+Image';
+                const displayPrice = car.price || 'N/A';
+                const mileage = car.mileage ? car.mileage.toLocaleString() : '0';
                 
-                let html = `
-                    <div class="content-header">
-                        <h4><i class="fas fa-heart me-2"></i>Favorite Cars</h4>
-                    </div>
-                `;
-                
-                if (favorites.length === 0) {
-                    html += `
-                        <div class="empty-state">
-                            <i class="fas fa-heart"></i>
-                            <h5>No Favorite Cars Yet</h5>
-                            <p>Start adding cars to your favorites by clicking the heart icon on any car</p>
-                            <a href="/view" class="btn btn-primary">
-                                <i class="fas fa-search me-2"></i>Browse Cars
-                            </a>
-                        </div>
-                    `;
-                } else {
-                    html += '<div class="row">';
-                    
-                    favorites.forEach(car => {
-                        const primaryImage = car.images?.find(img => img.isPrimary)?.imageUrl || car.images?.[0]?.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image';
-                        const displayPrice = car.price || 'N/A';
-                        
-                        html += `
-                            <div class="col-md-6">
-                                <div class="car-card card">
-                                    <img src="${primaryImage}" class="card-img-top" alt="${car.make} ${car.model}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${car.year} ${car.make} ${car.model}</h5>
-                                        <div class="price">${displayPrice}</div>
-                                        <div class="details">
-                                            <i class="fas fa-tachometer-alt me-1"></i>${car.mileage?.toLocaleString() || 0} km<br>
-                                            <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <a href="/car-details.html?id=${car.id}" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-eye me-1"></i>View
-                                            </a>
-                                            <button class="btn btn-outline-danger btn-sm" onclick="removeFavorite(${car.id})">
-                                                <i class="fas fa-trash me-1"></i>Remove
-                                            </button>
-                                        </div>
-                                    </div>
+                html += `
+                    <div class="col-md-6 mb-4">
+                        <div class="card car-card h-100">
+                            <img src="${primaryImage}" class="card-img-top" alt="${car.make} ${car.model}" 
+                                 style="height: 180px; object-fit: cover;"
+                                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                            <div class="card-body">
+                                <h5 class="card-title">${car.year} ${car.make} ${car.model}</h5>
+                                <div class="price text-primary fw-bold fs-5 mb-2">${displayPrice}</div>
+                                <div class="details text-muted small mb-3">
+                                    <i class="fas fa-tachometer-alt me-1"></i>${mileage} km<br>
+                                    <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <a href="/car-details.html?id=${car.id}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="removeFavorite(${car.id})">
+                                        <i class="fas fa-trash me-1"></i>Remove
+                                    </button>
                                 </div>
                             </div>
-                        `;
-                    });
-                    
-                    html += '</div>';
-                }
-                
-                return html;
-            } catch (error) {
-                console.error('Error loading favorites:', error);
-                return '<div class="alert alert-danger">Failed to load favorites</div>';
-            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
         }
+        
+        return html;
+    } catch (error) {
+        console.error('Error loading favorites:', error);
+        return `<div class="alert alert-danger">Failed to load favorites: ${error.message}</div>`;
+    }
+}
 
         async function removeFavorite(carId) {
             try {
@@ -907,67 +950,84 @@
 
         // ============= PRICE ALERTS SECTION =============
         async function getAlertsHTML() {
-            try {
-                const response = await fetch('/api/user/alerts');
-                const alerts = await response.json();
+    try {
+        const response = await fetch('/api/user/alerts');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const alerts = await response.json();
+        console.log('📊 Price alerts loaded:', alerts);
+        
+        let html = `
+            <div class="content-header">
+                <h4><i class="fas fa-bell me-2"></i>Price Alerts</h4>
+            </div>
+        `;
+        
+        if (!alerts || alerts.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <i class="fas fa-bell" style="font-size: 48px; color: #dee2e6;"></i>
+                    <h5 class="mt-3">No Price Alerts Set</h5>
+                    <p class="text-muted">Set price alerts on cars to get notified when prices drop</p>
+                    <a href="/view" class="btn btn-primary mt-3">
+                        <i class="fas fa-search me-2"></i>Browse Cars
+                    </a>
+                </div>
+            `;
+        } else {
+            alerts.forEach(alert => {
+                const createdDate = new Date(alert.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
                 
-                let html = `
-                    <div class="content-header">
-                        <h4><i class="fas fa-bell me-2"></i>Price Alerts</h4>
-                    </div>
-                `;
+                // Get car details from the included car association
+                const car = alert.car || {};
+                const carName = `${car.year || alert.carYear || ''} ${alert.carMake} ${alert.carModel}`.trim();
+                const carPrice = alert.carPrice || 'N/A';
+                const carLocation = alert.carLocation || car.location || 'N/A';
                 
-                if (alerts.length === 0) {
-                    html += `
-                        <div class="empty-state">
-                            <i class="fas fa-bell"></i>
-                            <h5>No Price Alerts Set</h5>
-                            <p>Set price alerts on cars to get notified when prices drop</p>
-                            <a href="/view" class="btn btn-primary">
-                                <i class="fas fa-search me-2"></i>Browse Cars
-                            </a>
-                        </div>
-                    `;
-                } else {
-                    alerts.forEach(alert => {
-                        const createdDate = new Date(alert.createdAt).toLocaleDateString();
-                        
-                        html += `
-                            <div class="alert-card ${alert.isActive ? 'active' : 'inactive'}">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="alert-title">
-                                            ${alert.carYear || ''} ${alert.carMake} ${alert.carModel}
-                                        </div>
-                                        <div class="alert-details">
-                                            <i class="fas fa-tag me-1"></i>Current Price: ${alert.carPrice || 'N/A'}<br>
-                                            <i class="fas fa-map-marker-alt me-1"></i>${alert.carLocation || 'N/A'}<br>
-                                            <i class="fas fa-calendar me-1"></i>Set on ${createdDate}<br>
-                                            ${alert.similarCars ? '<span class="badge bg-info mt-2">Also alert on similar cars</span>' : ''}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <span class="badge ${alert.isActive ? 'bg-success' : 'bg-secondary'}">
-                                            ${alert.isActive ? 'Active' : 'Inactive'}
-                                        </span>
-                                        ${alert.isActive ? `
-                                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deactivateAlert(${alert.id})">
-                                                <i class="fas fa-stop"></i>
-                                            </button>
-                                        ` : ''}
-                                    </div>
+                html += `
+                    <div class="alert-card ${alert.isActive ? 'active' : 'inactive'}" style="border-left: 4px solid ${alert.isActive ? '#28a745' : '#dc3545'}; background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-2">${carName}</h5>
+                                <div class="text-muted small">
+                                    <div><i class="fas fa-tag me-2"></i>Current Price: ${carPrice}</div>
+                                    <div><i class="fas fa-map-marker-alt me-2"></i>${carLocation}</div>
+                                    <div><i class="fas fa-calendar me-2"></i>Set on ${createdDate}</div>
+                                    ${alert.similarCars ? '<span class="badge bg-info mt-2">Also alert on similar cars</span>' : ''}
                                 </div>
                             </div>
-                        `;
-                    });
-                }
-                
-                return html;
-            } catch (error) {
-                console.error('Error loading alerts:', error);
-                return '<div class="alert alert-danger">Failed to load price alerts</div>';
-            }
+                            <div>
+                                <span class="badge ${alert.isActive ? 'bg-success' : 'bg-secondary'} px-3 py-2">
+                                    ${alert.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                                ${alert.isActive ? `
+                                    <button class="btn btn-sm btn-outline-danger ms-2" onclick="deactivateAlert(${alert.id})">
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                ` : ''}
+                                <a href="/car-details.html?id=${alert.carId}" class="btn btn-sm btn-outline-primary ms-2">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
+        
+        return html;
+    } catch (error) {
+        console.error('Error loading price alerts:', error);
+        return `<div class="alert alert-danger">Failed to load price alerts: ${error.message}</div>`;
+    }
+}
 
         async function deactivateAlert(alertId) {
             try {
@@ -987,22 +1047,129 @@
 
         // ============= RECENT ACTIVITY SECTION =============
         async function getRecentActivityHTML() {
-            // This is a placeholder - you can implement this based on your tracking needs
-            return `
-                <div class="content-header">
-                    <h4><i class="fas fa-history me-2"></i>Recent Activity</h4>
-                </div>
+    try {
+        const response = await fetch('/api/user/activities');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const activities = await response.json();
+        console.log('📊 Activities loaded:', activities);
+        
+        let html = `
+            <div class="content-header">
+                <h4><i class="fas fa-history me-2"></i>Recent Activity</h4>
+            </div>
+        `;
+        
+        if (!activities || activities.length === 0) {
+            html += `
                 <div class="empty-state">
-                    <i class="fas fa-history"></i>
-                    <h5>No Recent Activity</h5>
-                    <p>Your recent activity will appear here</p>
-                    <a href="/view" class="btn btn-primary">
-                        <i class="fas fa-search me-2"></i>Start Browsing
+                    <i class="fas fa-history" style="font-size: 48px; color: #dee2e6;"></i>
+                    <h5 class="mt-3">No Recent Activity</h5>
+                    <p class="text-muted">Your recent activity will appear here</p>
+                    <a href="/view" class="btn btn-primary mt-3">
+                        <i class="fas fa-search me-2"></i>Browse Cars
                     </a>
                 </div>
             `;
+        } else {
+            html += '<div class="list-group">';
+            
+            activities.forEach(activity => {
+                const date = new Date(activity.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                let icon = 'fa-circle';
+                let color = 'secondary';
+                let action = '';
+                let carInfo = '';
+                
+                if (activity.car) {
+                    carInfo = `${activity.car.year} ${activity.car.make} ${activity.car.model}`;
+                }
+                
+                switch(activity.activityType) {
+                    case 'view':
+                        icon = 'fa-eye';
+                        color = 'info';
+                        action = `Viewed ${carInfo || 'a car'}`;
+                        break;
+                    case 'favorite_add':
+                        icon = 'fa-heart';
+                        color = 'danger';
+                        action = `Added ${carInfo || 'a car'} to favorites`;
+                        break;
+                    case 'favorite_remove':
+                        icon = 'fa-heart-broken';
+                        color = 'secondary';
+                        action = `Removed ${carInfo || 'a car'} from favorites`;
+                        break;
+                    case 'save_add':
+                        icon = 'fa-bookmark';
+                        color = 'warning';
+                        action = `Saved ${carInfo || 'a car'} for later`;
+                        break;
+                    case 'save_remove':
+                        icon = 'fa-bookmark-slash';
+                        color = 'secondary';
+                        action = `Removed ${carInfo || 'a car'} from saved`;
+                        break;
+                    case 'price_alert_set':
+                        icon = 'fa-bell';
+                        color = 'success';
+                        action = `Set price alert for ${carInfo || 'a car'}`;
+                        break;
+                    case 'enquiry_sent':
+                        icon = 'fa-envelope';
+                        color = 'primary';
+                        action = `Sent enquiry about ${carInfo || 'a car'}`;
+                        break;
+                    default:
+                        icon = 'fa-circle';
+                        color = 'secondary';
+                        action = activity.details || 'Performed an action';
+                }
+                
+                html += `
+                    <div class="list-group-item list-group-item-action d-flex align-items-center border-0 mb-2 rounded-3" style="background: #f8f9fa;">
+                        <div class="me-3">
+                            <span class="badge bg-${color} rounded-circle p-3">
+                                <i class="fas ${icon}"></i>
+                            </span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 fw-bold">${action}</h6>
+                                <small class="text-muted">${date}</small>
+                            </div>
+                            ${activity.car ? `
+                                <a href="/car-details.html?id=${activity.carId}" class="text-decoration-none">
+                                    <small class="text-primary">
+                                        <i class="fas fa-arrow-right me-1"></i>View Car
+                                    </small>
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
         }
-
+        
+        return html;
+    } catch (error) {
+        console.error('Error loading activities:', error);
+        return `<div class="alert alert-danger">Failed to load recent activity: ${error.message}</div>`;
+    }
+}
         // ============= SETTINGS SECTION =============
         function getSettingsHTML() {
             return `

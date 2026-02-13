@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { UserSaved, Car, CarImage } = require('../models');
 const { requireAuth } = require('./auth');
+const { logActivity } = require('./userActivity');
 
 // Get user's saved cars
 router.get('/', requireAuth, async (req, res) => {
@@ -10,7 +11,7 @@ router.get('/', requireAuth, async (req, res) => {
       where: { userId: req.user.id },
       include: [{
         model: Car,
-        as: 'car', // IMPORTANT: Must match the alias in your association
+        as: 'car',
         include: [{
           model: CarImage,
           as: 'images',
@@ -20,7 +21,6 @@ router.get('/', requireAuth, async (req, res) => {
       order: [['createdAt', 'DESC']]
     });
     
-    // Extract the Car objects from the saved items
     const cars = saved.map(s => s.car).filter(car => car !== null);
     res.json(cars);
   } catch (error) {
@@ -41,6 +41,11 @@ router.post('/:carId', requireAuth, async (req, res) => {
       }
     });
     
+    if (created) {
+      // Log the activity
+      await logActivity(req.user.id, 'save_add', carId);
+    }
+    
     res.json({ success: true, added: created });
   } catch (error) {
     console.error('Error saving car:', error);
@@ -59,6 +64,11 @@ router.delete('/:carId', requireAuth, async (req, res) => {
         carId: carId
       }
     });
+    
+    if (deleted > 0) {
+      // Log the activity
+      await logActivity(req.user.id, 'save_remove', carId);
+    }
     
     res.json({ success: true, removed: deleted > 0 });
   } catch (error) {

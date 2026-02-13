@@ -201,9 +201,14 @@ router.get('/status', async (req, res) => {
 router.get('/profile', requireAuth, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'profileImage', 'createdAt', 'lastLogin']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'createdAt', 'updatedAt']
     });
     
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log(`📊 Profile fetched for user ${user.id}, created: ${user.createdAt}`);
     res.json(user);
   } catch (error) {
     console.error('Error fetching profile:', error);

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { PriceAlert, Car } = require('../models');
 const { requireAuth } = require('./auth');
+const { logActivity } = require('./userActivity');
 
 // Get user's price alerts
 router.get('/', requireAuth, async (req, res) => {
@@ -13,15 +14,17 @@ router.get('/', requireAuth, async (req, res) => {
       },
       include: [{
         model: Car,
+        as: 'car',
         attributes: ['id', 'make', 'model', 'year', 'price', 'mileage', 'location']
       }],
       order: [['createdAt', 'DESC']]
     });
     
+    console.log(`📊 Found ${alerts.length} alerts for user ${req.user.id}`);
     res.json(alerts);
   } catch (error) {
     console.error('Error fetching price alerts:', error);
-    res.status(500).json({ error: 'Failed to fetch price alerts' });
+    res.status(500).json({ error: 'Failed to fetch price alerts: ' + error.message });
   }
 });
 
@@ -58,6 +61,7 @@ router.post('/', requireAuth, async (req, res) => {
       });
     }
     
+    // Create alert with user's information
     const newAlert = await PriceAlert.create({
       userId: user.id,
       firstName: user.firstName,
@@ -71,9 +75,11 @@ router.post('/', requireAuth, async (req, res) => {
       carPrice,
       carMileage,
       carLocation,
-      similarCars,
+      similarCars: similarCars || false,
       isActive: true
     });
+    
+    console.log(`✅ Price alert created for user ${user.id} on car ${carId}`);
     
     res.json({ 
       success: true, 
@@ -82,7 +88,7 @@ router.post('/', requireAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating price alert:', error);
-    res.status(500).json({ error: 'Failed to create price alert' });
+    res.status(500).json({ error: 'Failed to create price alert: ' + error.message });
   }
 });
 
@@ -103,10 +109,11 @@ router.delete('/:alertId', requireAuth, async (req, res) => {
     alert.isActive = false;
     await alert.save();
     
+    console.log(`✅ Alert ${req.params.alertId} deactivated for user ${req.user.id}`);
     res.json({ success: true, message: 'Alert deactivated' });
   } catch (error) {
     console.error('Error deactivating alert:', error);
-    res.status(500).json({ error: 'Failed to deactivate alert' });
+    res.status(500).json({ error: 'Failed to deactivate alert: ' + error.message });
   }
 });
 

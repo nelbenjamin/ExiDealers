@@ -8,13 +8,14 @@ const PriceAlert = require('./PriceAlert');
 const Newsletter = require('./Newsletter');
 const Contact = require('./Contact');
 const CarEnquiry = require('./CarEnquiry');
+const UserActivity = require('./UserActivity');
 
-// IMPORTANT: Import user models directly (don't use try/catch - we want them to exist)
+// IMPORTANT: Import user models directly
 const User = require('./User');
 const UserFavorite = require('./UserFavorite');
-const UserSaved = require('./UserSaved'); // Note: I'm using UserSaved (not UserSavedCar)
+const UserSaved = require('./UserSaved');
 
-// Define all associations in one place - CLEAN AND ORGANIZED
+// Define all associations in one place
 
 // ============= CAR ASSOCIATIONS =============
 Car.hasMany(CarImage, { 
@@ -29,7 +30,7 @@ CarImage.belongsTo(Car, {
 
 // ============= USER ASSOCIATIONS =============
 
-// User -> Favorites (One-to-Many)
+// User -> Favorites
 User.hasMany(UserFavorite, {
   foreignKey: 'userId',
   as: 'favorites',
@@ -40,7 +41,7 @@ UserFavorite.belongsTo(User, {
   as: 'user'
 });
 
-// User -> Saved Cars (One-to-Many)
+// User -> Saved Cars
 User.hasMany(UserSaved, {
   foreignKey: 'userId',
   as: 'savedCars',
@@ -51,7 +52,7 @@ UserSaved.belongsTo(User, {
   as: 'user'
 });
 
-// User -> Price Alerts (One-to-Many)
+// User -> Price Alerts
 User.hasMany(PriceAlert, {
   foreignKey: 'userId',
   as: 'priceAlerts',
@@ -62,9 +63,20 @@ PriceAlert.belongsTo(User, {
   as: 'user'
 });
 
-// ============= CAR FAVORITE/SAVED ASSOCIATIONS =============
+// User -> Activities
+User.hasMany(UserActivity, {
+  foreignKey: 'userId',
+  as: 'activities',
+  onDelete: 'CASCADE'
+});
+UserActivity.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
 
-// Car -> Favorites (One-to-Many)
+// ============= CAR FAVORITE/SAVED/ACTIVITY ASSOCIATIONS =============
+
+// Car -> Favorites
 Car.hasMany(UserFavorite, {
   foreignKey: 'carId',
   as: 'favoritedBy',
@@ -75,13 +87,24 @@ UserFavorite.belongsTo(Car, {
   as: 'car'
 });
 
-// Car -> Saved (One-to-Many)
+// Car -> Saved
 Car.hasMany(UserSaved, {
   foreignKey: 'carId',
   as: 'savedBy',
   onDelete: 'CASCADE'
 });
 UserSaved.belongsTo(Car, {
+  foreignKey: 'carId',
+  as: 'car'
+});
+
+// Car -> Activities
+Car.hasMany(UserActivity, {
+  foreignKey: 'carId',
+  as: 'activities',
+  onDelete: 'SET NULL'
+});
+UserActivity.belongsTo(Car, {
   foreignKey: 'carId',
   as: 'car'
 });
@@ -98,11 +121,9 @@ async function syncDatabase() {
     await sequelize.authenticate();
     console.log('✅ Database connection established successfully.');
 
-    // Use { alter: true } to add new columns to existing tables
     await sequelize.sync({ alter: true });
     console.log('✅ All models were synchronized successfully. New columns added.');
     
-    // Log all synced tables
     const [results] = await sequelize.query('SHOW TABLES');
     console.log('📊 Active tables:', results.map(r => Object.values(r)[0]).join(', '));
     
@@ -121,6 +142,7 @@ module.exports = {
   Newsletter,
   Contact,
   CarEnquiry,
+  UserActivity,
   User,
   UserFavorite,
   UserSaved

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const PriceAlert = require('../models/PriceAlert');
+const { PriceAlert } = require('../models');
 
-// Create price alert
+// Create price alert (for guest users or when not logged in)
 router.post('/', async (req, res) => {
   try {
     const { 
@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
       carMake, 
       carModel, 
       carYear, 
-      carPrice,  // Changed from currentPrice
+      carPrice,
       carMileage, 
       carLocation, 
       similarCars 
@@ -26,10 +26,15 @@ router.post('/', async (req, res) => {
     });
     
     if (existingAlert) {
-      return res.json({ message: 'Alert already exists for this car' });
+      return res.json({ 
+        success: true, 
+        message: 'Alert already exists for this car',
+        alert: existingAlert 
+      });
     }
     
     const newAlert = await PriceAlert.create({
+      userId: null, // Guest user
       firstName,
       lastName,
       email,
@@ -38,16 +43,18 @@ router.post('/', async (req, res) => {
       carMake,
       carModel,
       carYear,
-      carPrice,  // Changed from currentPrice
+      carPrice,
       carMileage,
       carLocation,
-      similarCars
+      similarCars: similarCars || false,
+      isActive: true
     });
     
+    console.log(`✅ Price alert created for guest: ${email} on car ${carId}`);
     res.json({ success: true, alert: newAlert });
   } catch (error) {
     console.error('Error creating price alert:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 });
 
@@ -70,12 +77,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get alerts for user
+// Get alerts for a specific email (for guests)
 router.get('/:email', async (req, res) => {
   try {
     const { email } = req.params;
     const alerts = await PriceAlert.findAll({
-      where: { email },
+      where: { email, isActive: true },
       order: [['createdAt', 'DESC']]
     });
     
@@ -100,26 +107,6 @@ router.delete('/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting price alert:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Deactivate alert
-router.patch('/:id/deactivate', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const alert = await PriceAlert.findByPk(id);
-    
-    if (!alert) {
-      return res.status(404).json({ error: 'Alert not found' });
-    }
-    
-    alert.isActive = false;
-    await alert.save();
-    
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error deactivating price alert:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

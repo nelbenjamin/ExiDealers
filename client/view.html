@@ -1811,7 +1811,7 @@ function showEmptyState(message) {
     }
 }
 
-function displayCars(cars) {
+async function displayCars(cars) {
     const container = document.getElementById('carsContainer');
     const paginationContainer = document.getElementById('paginationContainer');
     
@@ -1829,8 +1829,18 @@ function displayCars(cars) {
     
     console.log(`🎨 Displaying ${cars.length} cars for page ${currentPage}`);
     
-    // Display cars
-    cars.forEach(car => {
+    // Check auth status once for all cars
+    let isAuthenticated = false;
+    try {
+        const authResponse = await fetch('/api/auth/status');
+        const authData = await authResponse.json();
+        isAuthenticated = authData.authenticated;
+    } catch (error) {
+        console.error('Error checking auth status:', error);
+    }
+    
+    // For each car, check its favorite/saved status
+    for (const car of cars) {
         const card = document.createElement('div');
         card.className = 'col-6 col-md-4 col-lg-3 col-xxl mb-3';
         
@@ -1861,8 +1871,27 @@ function displayCars(cars) {
             car.price.toString() : 'N/A';
         
         // Check if car is in favorites/saved
-        const isFavorited = JSON.parse(localStorage.getItem('favoriteCars') || '[]').includes(car.id.toString());
-        const isSaved = JSON.parse(localStorage.getItem('savedCars') || '[]').includes(car.id.toString());
+        let isFavorited = false;
+        let isSaved = false;
+        
+        if (isAuthenticated) {
+            // Check server for logged in users
+            try {
+                const favResponse = await fetch(`/api/user/favorites/check/${car.id}`);
+                const favData = await favResponse.json();
+                isFavorited = favData.isFavorited;
+                
+                const savedResponse = await fetch(`/api/user/saved/check/${car.id}`);
+                const savedData = await savedResponse.json();
+                isSaved = savedData.isSaved;
+            } catch (error) {
+                console.error(`Error checking status for car ${car.id}:`, error);
+            }
+        } else {
+            // Use localStorage for guest users
+            isFavorited = JSON.parse(localStorage.getItem('favoriteCars') || '[]').includes(car.id.toString());
+            isSaved = JSON.parse(localStorage.getItem('savedCars') || '[]').includes(car.id.toString());
+        }
         
         card.innerHTML = `
             <div class="card car-card h-100" data-car-id="${car.id}">
@@ -1911,10 +1940,10 @@ function displayCars(cars) {
                     
                     <div class="details mb-0">
                         <small class="text-muted d-block">
-                            <i class="fas fa-tachometer-alt me-1"></i>${car.mileage.toLocaleString()} km
+                            <i class="fas fa-tachometer-alt me-1"></i>${car.mileage ? car.mileage.toLocaleString() : 0} km
                         </small>
                         <small class="text-muted d-block">
-                            <i class="fas fa-map-marker-alt me-1"></i>${car.location}
+                            <i class="fas fa-map-marker-alt me-1"></i>${car.location || 'N/A'}
                         </small>
                         <small class="text-muted d-block">
                             <i class="fas fa-car me-1"></i>${car.condition || 'N/A'}
@@ -1930,7 +1959,7 @@ function displayCars(cars) {
             </div>
         `;
         container.appendChild(card);
-    });
+    }
     
     // Generate pagination based on server-side info
     generatePagination();
@@ -2064,14 +2093,9 @@ function addCarActionListeners() {
     document.querySelectorAll('.favorite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.classList.toggle('favorited');
             const carId = this.getAttribute('data-car-id');
+            // Don't toggle class here - let toggleFavorite handle it
             toggleFavorite(carId);
-            
-            // Update title
-            this.title = this.classList.contains('favorited') 
-                ? 'Remove from favorites' 
-                : 'Add to favorites';
         });
     });
     
@@ -2079,14 +2103,9 @@ function addCarActionListeners() {
     document.querySelectorAll('.save-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.classList.toggle('active');
             const carId = this.getAttribute('data-car-id');
+            // Don't toggle class here - let toggleSave handle it
             toggleSave(carId);
-            
-            // Update title
-            this.title = this.classList.contains('active') 
-                ? 'Remove from saved' 
-                : 'Save for later';
         });
     });
     
@@ -2102,19 +2121,82 @@ function addCarActionListeners() {
     });
 }
 
-function toggleFavorite(carId) {
-    const favorites = JSON.parse(localStorage.getItem('favoriteCars')) || [];
-    const index = favorites.indexOf(carId);
+async function toggleFavorite(carId) {
+    const button = document.querySelector(`.favorite-btn[data-car-id="${carId}"]`);
+    const wasFavorited = button.classList.contains('favorited');
     
-    if (index > -1) {
-        favorites.splice(index, 1);
-        showToast('Removed from favorites');
-    } else {
-        favorites.push(carId);
-        showToast('Added to favorites');
+    try {
+        // Check if user is logged in
+        const authResponse = await fetch('/api/auth/status');
+        const authData = await authResponse.json();
+        
+        if (authData.authenticated) {
+            // User is logged in - use server API
+            let response;
+            let success = false;
+            
+            if (wasFavorited) {
+                // Remove from favorites
+                response = await fetch(`/api/user/favorites/${carId}`, {
+                    method: 'DELETE'
+                });
+                success = response.ok;
+                
+                if (success) {
+                    button.classList.remove('favorited');
+                    button.title = 'Add to favorites';
+                    showToast('Removed from favorites');
+                    console.log('✅ Removed from favorites');
+                }
+            } else {
+                // Add to favorites
+                response = await fetch(`/api/user/favorites/${carId}`, {
+                    method: 'POST'
+                });
+                success = response.ok;
+                
+                if (success) {
+                    button.classList.add('favorited');
+                    button.title = 'Remove from favorites';
+                    showToast('Added to favorites');
+                    console.log('✅ Added to favorites');
+                }
+            }
+            
+            if (!success) {
+                throw new Error('Server returned error');
+            }
+        } else {
+            // Guest user - use localStorage
+            const favorites = JSON.parse(localStorage.getItem('favoriteCars')) || [];
+            const index = favorites.indexOf(carId.toString());
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                button.classList.remove('favorited');
+                button.title = 'Add to favorites';
+                showToast('Removed from favorites');
+                console.log('✅ Removed from favorites (local)');
+            } else {
+                favorites.push(carId.toString());
+                button.classList.add('favorited');
+                button.title = 'Remove from favorites';
+                showToast('Added to favorites');
+                console.log('✅ Added to favorites (local)');
+            }
+            
+            localStorage.setItem('favoriteCars', JSON.stringify(favorites));
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showToast('Error updating favorites', 'danger');
+        // Revert button state on error
+        if (wasFavorited) {
+            button.classList.add('favorited');
+        } else {
+            button.classList.remove('favorited');
+        }
     }
-    
-    localStorage.setItem('favoriteCars', JSON.stringify(favorites));
     
     // If we're in favorites view, update the display
     if (currentView === 'favorites') {
@@ -2122,19 +2204,82 @@ function toggleFavorite(carId) {
     }
 }
 
-function toggleSave(carId) {
-    const savedCars = JSON.parse(localStorage.getItem('savedCars')) || [];
-    const index = savedCars.indexOf(carId);
+async function toggleSave(carId) {
+    const button = document.querySelector(`.save-btn[data-car-id="${carId}"]`);
+    const wasSaved = button.classList.contains('active');
     
-    if (index > -1) {
-        savedCars.splice(index, 1);
-        showToast('Removed from saved');
-    } else {
-        savedCars.push(carId);
-        showToast('Saved for later');
+    try {
+        // Check if user is logged in
+        const authResponse = await fetch('/api/auth/status');
+        const authData = await authResponse.json();
+        
+        if (authData.authenticated) {
+            // User is logged in - use server API
+            let response;
+            let success = false;
+            
+            if (wasSaved) {
+                // Remove from saved
+                response = await fetch(`/api/user/saved/${carId}`, {
+                    method: 'DELETE'
+                });
+                success = response.ok;
+                
+                if (success) {
+                    button.classList.remove('active');
+                    button.title = 'Save for later';
+                    showToast('Removed from saved');
+                    console.log('✅ Removed from saved');
+                }
+            } else {
+                // Add to saved
+                response = await fetch(`/api/user/saved/${carId}`, {
+                    method: 'POST'
+                });
+                success = response.ok;
+                
+                if (success) {
+                    button.classList.add('active');
+                    button.title = 'Remove from saved';
+                    showToast('Saved for later');
+                    console.log('✅ Added to saved');
+                }
+            }
+            
+            if (!success) {
+                throw new Error('Server returned error');
+            }
+        } else {
+            // Guest user - use localStorage
+            const savedCars = JSON.parse(localStorage.getItem('savedCars')) || [];
+            const index = savedCars.indexOf(carId.toString());
+            
+            if (index > -1) {
+                savedCars.splice(index, 1);
+                button.classList.remove('active');
+                button.title = 'Save for later';
+                showToast('Removed from saved');
+                console.log('✅ Removed from saved (local)');
+            } else {
+                savedCars.push(carId.toString());
+                button.classList.add('active');
+                button.title = 'Remove from saved';
+                showToast('Saved for later');
+                console.log('✅ Added to saved (local)');
+            }
+            
+            localStorage.setItem('savedCars', JSON.stringify(savedCars));
+        }
+    } catch (error) {
+        console.error('Error toggling saved:', error);
+        showToast('Error updating saved cars', 'danger');
+        // Revert button state on error
+        if (wasSaved) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
     }
-    
-    localStorage.setItem('savedCars', JSON.stringify(savedCars));
     
     // If we're in saved view, update the display
     if (currentView === 'saved') {
@@ -2205,31 +2350,10 @@ document.getElementById('submitPriceAlert').addEventListener('click', async func
     }
     
     try {
-        // Save to localStorage for dashboard
-        const alerts = JSON.parse(localStorage.getItem('priceAlerts')) || [];
-        const newAlert = {
-            id: 'alert-' + Date.now(),
-            firstName,
-            lastName,
-            phone,
-            email,
-            carId,
-            carMake,
-            carModel,
-            carYear: car ? car.year : null,
-            carPrice: currentPrice,
-            carMileage: car ? car.mileage : null,
-            carLocation: car ? car.location : null,
-            carName: `${carMake} ${carModel}`,
-            currentPrice,
-            similarCars,
-            createdAt: new Date().toISOString()
-        };
+        // Check if user is logged in
+        const authResponse = await fetch('/api/auth/status');
+        const authData = await authResponse.json();
         
-        alerts.push(newAlert);
-        localStorage.setItem('priceAlerts', JSON.stringify(alerts));
-        
-        // Also send to backend API
         const backendAlert = {
             firstName: firstName,
             lastName: lastName,
@@ -2245,10 +2369,24 @@ document.getElementById('submitPriceAlert').addEventListener('click', async func
             similarCars: similarCars
         };
         
-        console.log('📤 Sending price alert to backend:', backendAlert);
+        // If user is logged in, we'll use the user alerts endpoint which will associate the alert with their account
+        let url = '/api/price-alerts';
+        let method = 'POST';
+        
+        if (authData.authenticated) {
+            // Use the user-specific alerts endpoint for logged in users
+            url = '/api/user/alerts';
+            // Remove firstName/lastName/email from the request - it will use the user's data
+            delete backendAlert.firstName;
+            delete backendAlert.lastName;
+            delete backendAlert.email;
+            delete backendAlert.phone;
+        }
+        
+        console.log('📤 Sending price alert to:', url, backendAlert);
         
         // Send to backend API
-        const response = await fetch('/api/price-alerts', {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -2262,7 +2400,7 @@ document.getElementById('submitPriceAlert').addEventListener('click', async func
         }
         
         const result = await response.json();
-        console.log('✅ Price alert saved to backend:', result);
+        console.log('✅ Price alert saved:', result);
         
         showToast('Price alert set successfully!');
         
@@ -2361,82 +2499,6 @@ async function loadSearchDropdownData() {
             </div>
         </div>
     </footer>
-
-<script>
-// Navigation script for all pages
-document.addEventListener('DOMContentLoaded', async function() {
-    await loadNavigation();
-});
-
-async function loadNavigation() {
-    try {
-        const response = await fetch('/api/auth/status');
-        const data = await response.json();
-        
-        const navbarContent = document.getElementById('navbarContent') || document.querySelector('.navbar-collapse');
-        
-        if (!navbarContent) return;
-        
-        if (data.authenticated) {
-            // User is logged in - show user dropdown
-            navbarContent.innerHTML = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i> ${data.user.name}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
-                            <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
-                            <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            `;
-        } else {
-            // User is not logged in - show login/register
-            navbarContent.innerHTML = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname === '/' ? 'active' : ''}" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/view') ? 'active' : ''}" href="/view">Browse Cars</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/contact') ? 'active' : ''}" href="/contact">Contact Us</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/login') ? 'active' : ''}" href="/login">Login</a></li>
-                    <li class="nav-item"><a class="nav-link ${window.location.pathname.includes('/register') ? 'active' : ''}" href="/register">Register</a></li>
-                </ul>
-            `;
-        }
-        
-        // Initialize Bootstrap dropdown
-        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-        dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl);
-        });
-        
-    } catch (error) {
-        console.error('Error loading navigation:', error);
-    }
-}
-
-async function logoutUser() {
-    try {
-        const response = await fetch('/api/auth/logout', {
-            method: 'POST'
-        });
-        
-        if (response.ok) {
-            window.location.reload();
-        }
-    } catch (error) {
-        console.error('Logout error:', error);
-    }
-}
-</script>
 
 </body>
 </html>
