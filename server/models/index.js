@@ -9,6 +9,7 @@ const Newsletter = require('./Newsletter');
 const Contact = require('./Contact');
 const CarEnquiry = require('./CarEnquiry');
 const UserActivity = require('./UserActivity');
+const Dealer = require('./Dealer');
 
 // IMPORTANT: Import user models directly
 const User = require('./User');
@@ -27,6 +28,10 @@ CarImage.belongsTo(Car, {
   foreignKey: 'carId', 
   as: 'car'
 });
+
+// Add dealer association to Car
+Car.belongsTo(Dealer, { foreignKey: 'dealerId' });
+Dealer.hasMany(Car, { foreignKey: 'dealerId' });
 
 // ============= USER ASSOCIATIONS =============
 
@@ -145,5 +150,6 @@ module.exports = {
   UserActivity,
   User,
   UserFavorite,
-  UserSaved
+  UserSaved,
+  Dealer
 };

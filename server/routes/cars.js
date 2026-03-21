@@ -126,6 +126,18 @@ router.get('/brands-models/counts', async (req, res) => {
   }
 });
 
+// Add to your routes/cars.js
+router.get('/cars/windhoek', async (req, res) => {
+    const cars = await Car.findAll({
+        where: { location: 'Windhoek' },
+        limit: 30
+    });
+    // Serve a dedicated HTML page or modify your view.html with city context
+    res.redirect(`/view?location=Windhoek&title=Cars+for+sale+in+Windhoek`);
+});
+
+// Similar for Swakopmund, Walvis Bay, Oshakati
+
 // Get all cars with pagination and filtering - COMPLETELY FIXED PRICE FILTERING
 router.get('/', async (req, res) => {
   try {

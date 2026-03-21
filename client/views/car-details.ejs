@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- DYNAMIC SEO TAGS - Generated from database -->
+    <title><%= car.year %> <%= car.make %> <%= car.model %> for sale in <%= car.location %> | Exi Dealers Namibia</title>
+    <meta name="description" content="<%= generateDescription(car) %>">
+    <meta name="keywords" content="<%= car.make %>, <%= car.model %>, <%= car.year %>, used cars Namibia, second hand cars <%= car.location %>, car dealer Windhoek, Exi Dealers">
+    
+    <!-- CANONICAL URL - SEO Critical -->
+    <link rel="canonical" href="https://exidealers.com/car/<%= car.slug %>-<%= car.id %>">
+    
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="<%= car.year %> <%= car.make %> <%= car.model %> - <%= formatPrice(car.price) %>">
+    <meta property="og:description" content="<%= generateShortDescription(car) %>">
+    <meta property="og:image" content="<%= car.primaryImage %>">
+    <meta property="og:url" content="https://exidealers.com/car/<%= car.slug %>-<%= car.id %>">
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="Exi Dealers Namibia">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= car.year %> <%= car.make %> <%= car.model %> | Exi Dealers">
+    <meta name="twitter:description" content="<%= generateShortDescription(car) %>">
+    <meta name="twitter:image" content="<%= car.primaryImage %>">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    
+    <!-- Bootstrap & Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="/styles.css" rel="stylesheet" />
+    
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1669192747799799');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
+    /></noscript>
+    
+    <style>
+        :root {
+            --primary-blue: #1a365d;
+            --secondary-blue: #2c5282;
+            --accent-blue: #3182ce;
+        }
+        
+        .footer {
+            background: #1a1a1a !important;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1800&q=80') no-repeat center center;
+            background-size: cover;
+            z-index: -2;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            filter: brightness(0.8);
+        }
+        
+        body.background-loaded::before {
+            opacity: 0.8;
+        }
+        
+        .bg-white, .bg-light, .card {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+        }
+        
+        .car-details-container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+        
+        .car-gallery {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .main-car-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnail.active, .thumbnail:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .car-specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .spec-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .spec-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .spec-content h6 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .spec-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .price-section {
+            background: var(--primary-blue);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .price-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .price-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .enquiry-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        
+        .description-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .description-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .fullscreen-gallery {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fullscreen-gallery.active {
+            display: flex;
+        }
+        
+        .fullscreen-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .gallery-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            transform: translateY(-50%);
+            z-index: 10000;
+        }
+        
+        .gallery-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .side-modal {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 420px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease-in-out;
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .side-modal.active {
+            right: 0;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            display: none;
+        }
+        
+        .modal-overlay.active {
+            display: block;
+        }
+        
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .share-option:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .share-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .share-option.whatsapp .share-icon { color: #25D366; }
+        .share-option.facebook .share-icon { color: #1877F2; }
+        .share-option.twitter .share-icon { color: #1DA1F2; }
+        .share-option.instagram .share-icon { color: #E4405F; }
+        .share-option.email .share-icon { color: #EA4335; }
+        
+        .car-name-display {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 76px;
+        }
+        
+        .car-name-display h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .car-name-display .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .car-description-text {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        body {
+            padding-top: 0 !important;
+        }
+        
+        .car-details-content {
+            margin-top: 0 !important;
+        }
+        
+        .favorite-btn.favorited {
+            color: #dc3545 !important;
+            background-color: rgba(220, 53, 69, 0.1) !important;
+        }
+        
+        .navbar-brand img {
+            filter: brightness(0) invert(1);
+            height: 60px !important;
+            width: auto;
+        }
+        
+        .navbar {
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            min-height: 80px;
+        }
+        
+        .nav-link {
+            font-size: 1rem !important;
+            padding: 0.6rem 1rem !important;
+            font-weight: 600 !important;
+        }
+        
+        .card-header h5 {
+            font-size: 1.2rem !important;
+        }
+        
+        .form-label {
+            font-size: 0.95rem !important;
+        }
+        
+        .card-body p {
+            font-size: 0.95rem !important;
+        }
+        
+        .enquiry-form h4 {
+            font-size: 1.3rem !important;
+        }
+        
+        .side-modal h4 {
+            font-size: 1.3rem !important;
+        }
+        
+        .side-modal p {
+            font-size: 0.95rem !important;
+        }
+        
+        .share-option span {
+            font-size: 0.9rem !important;
+        }
+        
+        .footer h5 {
+            font-size: 1.1rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .footer p, .footer li, .footer a {
+            font-size: 0.9rem !important;
+        }
+        
+        .car-name-display .lead {
+            font-size: 1rem !important;
+        }
+        
+        .btn {
+            font-size: 0.9rem !important;
+        }
+        
+        .btn-lg {
+            font-size: 1rem !important;
+        }
+        
+        .user-initials {
+            width: 35px;
+            height: 35px;
+            background: #ffc107;
+            color: #1a365d;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 5px;
+        }
+    </style>
+    
+    <!-- SCHEMA MARKUP - Vehicle -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Vehicle",
+        "name": "<%= car.year %> <%= car.make %> <%= car.model %>",
+        "description": "<%= escapeJson(car.description || '') %>",
+        "brand": {
+            "@type": "Brand",
+            "name": "<%= car.make %>"
+        },
+        "model": "<%= car.model %>",
+        "vehicleModelDate": <%= car.year %>,
+        "mileageFromOdometer": {
+            "@type": "QuantitativeValue",
+            "value": <%= car.mileage || 0 %>,
+            "unitCode": "KMT"
+        },
+        "price": "<%= extractNumericPrice(car.price) %>",
+        "priceCurrency": "NAD",
+        "itemCondition": "https://schema.org/<%= car.condition === 'excellent' ? 'NewCondition' : 'UsedCondition' %>",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+            "@type": "AutoDealer",
+            "name": "Exi Dealers Namibia",
+            "telephone": "+264812675760",
+            "email": "sales@exidealers.com",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Windhoek",
+                "addressCountry": "NA"
+            }
+        },
+        "vehicleTransmission": "<%= car.transmission || 'N/A' %>",
+        "fuelType": "<%= car.fuelType || 'N/A' %>",
+        "driveWheelConfiguration": "<%= car.driveType || 'N/A' %>",
+        "bodyType": "<%= car.bodyType || 'N/A' %>",
+        "vehicleIdentificationNumber": "EXI-<%= car.id %>",
+        "url": "https://exidealers.com/car/<%= car.slug %>-<%= car.id %>",
+        "image": [
+            <% car.images.forEach((img, index) => { %>
+            "<%= img.imageUrl %>"<%= index < car.images.length - 1 ? ',' : '' %>
+            <% }) %>
+        ]
+    }
+    </script>
+    
+    <!-- Local Business Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "AutoDealer",
+        "name": "Exi Dealers Namibia",
+        "image": "https://exidealers.com/logo.png",
+        "url": "https://exidealers.com",
+        "telephone": "+264812675760",
+        "email": "sales@exidealers.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Windhoek",
+            "addressRegion": "Khomas",
+            "addressCountry": "NA"
+        },
+        "priceRange": "$$",
+        "areaServed": [
+            { "@type": "City", "name": "Windhoek" },
+            { "@type": "City", "name": "Swakopmund" },
+            { "@type": "City", "name": "Walvis Bay" },
+            { "@type": "City", "name": "Oshakati" }
+        ],
+        "hasMap": "https://maps.google.com/?q=Exi+Dealers+Windhoek",
+        "sameAs": [
+            "https://www.facebook.com/exidealers",
+            "https://www.instagram.com/exidealers"
+        ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Navigation Partial -->
+    <%- include('partials/navigation') %>
+
+    <!-- Car Name Display Section -->
+    <section class="car-name-display">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><%= car.year %> <%= car.make %> <%= car.model %></h1>
+                    <p class="lead mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i><%= car.location %>, Namibia
+                    </p>
+                    <div class="car-description-text mt-3">
+                        <%= generateShortDescription(car) %>
+                    </div>
+                    <button class="btn btn-outline-light mt-3" onclick="window.location.href='/view'">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Browse Cars
+                    </button>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="price text-warning"><%= formatPrice(car.price) %></div>
+                    <div class="car-actions mt-2">
+                        <button class="btn btn-outline-light favorite-btn" 
+                                data-car-id="<%= car.id %>" 
+                                title="Add to favorites">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="btn btn-outline-light" 
+                                onclick="openShareModal()" 
+                                title="Share">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-3">
+        <div class="car-details-container">
+            <div class="row">
+                <!-- Left Column - Images & Specs -->
+                <div class="col-lg-8">
+                    <!-- Image Gallery -->
+                    <div class="car-gallery">
+                        <img id="mainCarImage" 
+                             src="car.primaryImage %>" 
+                             alt="car.year car.make car.model" 
+                             class="main-car-image" 
+                             onclick="openFullscreenGallery(0)">
+                        
+                        if (car.images && car.images.length > 0) { 
+                        <div class="thumbnail-container" id="thumbnailContainer">
+                            car.images.forEach((image, index) => { %>
+                            <img src="image.imageUrl" 
+                                 alt="car.make car.model %> - Image index + 1" 
+                                 class="thumbnail index === 0 ? 'active' : ''"
+                                 onclick="changeMainImage(index)">
+                            }) 
+                        </div>
+                         }
+                    </div>
+
+                    <!-- Vehicle Specifications -->
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: var(--primary-blue);">
+                            <h5 class="mb-0"><i class="fas fa-list-alt me-2"></i>Vehicle Specifications</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="car-specs-grid">
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Mileage</h6>
+                                        <p>car.mileage ? car.mileage.toLocaleString() : '0'km</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-calendar"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Year</h6>
+                                        <p>car.year</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-car"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Body Type</h6>
+                                        <p>car.bodyType || 'N/A'</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-cog"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Transmission</h6>
+                                        <p>car.transmission || 'N/A'</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-gas-pump"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Fuel Type</h6>
+                                        <p>car.fuelType || 'N/A'</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-cogs"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Drive Type</h6>
+                                        <p>car.driveType || 'N/A'</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-star"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Condition</h6>
+                                        <p>capitalize(car.condition)</p>
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div class="spec-content">
+                                        <h6>Location</h6>
+                                        <p>car.location</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Description -->
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: var(--primary-blue);">
+                            <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Vehicle Description</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (car.description) { %>
+                                <% if (car.description.includes('•') || car.description.includes('\n')) { %>
+                                    <div class="description-grid">
+                                        <% car.description.split('\n').filter(line => line.trim()).forEach(line => { %>
+                                        <div class="description-item">
+                                            <i class="fas fa-check text-success me-2"></i>
+                                            <%= line.replace('•', '').trim() %>
+                                        </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="lead"><%= car.description %></p>
+                                <% } %>
+                            <% } else { %>
+                                <p class="text-muted">No description available for this vehicle.</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Seller Information -->
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: var(--primary-blue);">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Seller Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Seller Name:</strong> <%= car.sellerName || 'Exi Dealers' %></p>
+                                    <p><strong>Email:</strong> <%= car.sellerEmail || 'sales@exidealers.com' %></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Phone:</strong> <%= car.sellerPhone || '+264812675760' %></p>
+                                    <p><strong>Preferred Contact:</strong> <%= capitalize(car.preferredContact) || 'Email' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Price & Enquiry Form -->
+                <div class="col-lg-4">
+                    <!-- Price Section -->
+                    <div class="price-section">
+                        <div class="price-amount"><%= formatPrice(car.price) %></div>
+                        <div class="price-label">Asking Price</div>
+                        <button class="btn btn-outline-light w-100 mt-3" onclick="openPriceAlertModal()">
+                            <i class="fas fa-bell me-2"></i>Set Price Alert
+                        </button>
+                    </div>
+
+                    <!-- Enquiry Form -->
+                    <div class="enquiry-form">
+                        <h4 class="mb-4"><i class="fas fa-envelope me-2"></i>Message Seller</h4>
+                        <form id="carEnquiryForm">
+                            <input type="hidden" id="enquiryCarId" value="<%= car.id %>">
+                            <input type="hidden" id="enquiryCarName" value="<%= car.year %> <%= car.make %> <%= car.model %>">
+                            
+                            <div class="mb-3">
+                                <label for="enquiryFullName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="enquiryFullName" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="enquiryEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="enquiryEmail" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="enquiryPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="enquiryPhone" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="enquiryMessage" class="form-label">Your Message *</label>
+                                <textarea class="form-control" id="enquiryMessage" rows="5" required>I would like to check the availability or enquire about the <%= car.year %> <%= car.make %> <%= car.model %>. Please contact me with more information.</textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn w-100 btn-lg" style="background-color: var(--primary-blue); color: white;">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fullscreen Image Gallery -->
+    <div class="fullscreen-gallery" id="fullscreenGallery">
+        <div class="gallery-controls">
+            <button class="gallery-btn" onclick="closeFullscreenGallery()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="gallery-nav">
+            <button class="gallery-btn" onclick="navigateFullscreenImage(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="gallery-btn" onclick="navigateFullscreenImage(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <img class="fullscreen-image" id="fullscreenImage" src="" alt="Fullscreen Car Image">
+        
+        <div class="image-counter" id="fullscreenCounter">1/1</div>
+    </div>
+
+    <!-- Price Alert Modal -->
+    <div class="modal-overlay" id="priceAlertOverlay" onclick="closePriceAlertModal()"></div>
+    <div class="side-modal" id="priceAlertModal">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-bell me-2"></i>Set Price Alert</h4>
+            <button class="btn-close" onclick="closePriceAlertModal()"></button>
+        </div>
+        
+        <p>Be the first to know when this car (or similar ones) drops in price. Enter your details and we'll alert you instantly.</p>
+        
+        <form id="priceAlertForm">
+            <input type="hidden" id="alertCarId" value="<%= car.id %>">
+            <input type="hidden" id="alertCarMake" value="<%= car.make %>">
+            <input type="hidden" id="alertCarModel" value="<%= car.model %>">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="alertFirstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="alertFirstName" required placeholder="Enter first name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="alertLastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="alertLastName" required placeholder="Enter last name">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="alertPhone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="alertPhone" required placeholder="Enter phone number">
+            </div>
+            
+            <div class="mb-3">
+                <label for="alertEmail" class="form-label">Your Email</label>
+                <input type="email" class="form-control" id="alertEmail" required placeholder="Enter your email">
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="similarCars" checked>
+                <label class="form-check-label" for="similarCars">Also alert me about similar cars</label>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-secondary" onclick="closePriceAlertModal()">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="submitPriceAlert()">Send Me Alerts</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareOverlay" onclick="closeShareModal()"></div>
+    <div class="side-modal" id="shareModal">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-share-alt me-2"></i>Share This Car</h4>
+            <button class="btn-close" onclick="closeShareModal()"></button>
+        </div>
+        
+        <div class="text-center mb-4">
+            <img id="shareCarImage" src="<%= car.primaryImage %>" alt="Car Image" class="img-fluid rounded mb-3" style="max-height: 150px; object-fit: cover;">
+            <h5 id="shareCarName"><%= car.year %> <%= car.make %> <%= car.model %></h5>
+            <p class="text-muted" id="shareCarPrice"><%= formatPrice(car.price) %></p>
+        </div>
+        
+        <div class="share-options">
+            <a href="#" class="share-option whatsapp" onclick="shareOnWhatsApp(event)">
+                <div class="share-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <span>WhatsApp</span>
+            </a>
+            
+            <a href="#" class="share-option facebook" onclick="shareOnFacebook(event)">
+                <div class="share-icon">
+                    <i class="fab fa-facebook"></i>
+                </div>
+                <span>Facebook</span>
+            </a>
+            
+            <a href="#" class="share-option twitter" onclick="shareOnTwitter(event)">
+                <div class="share-icon">
+                    <i class="fab fa-twitter"></i>
+                </div>
+                <span>Twitter</span>
+            </a>
+            
+            <a href="#" class="share-option instagram" onclick="shareOnInstagram(event)">
+                <div class="share-icon">
+                    <i class="fab fa-instagram"></i>
+                </div>
+                <span>Instagram</span>
+            </a>
+            
+            <a href="#" class="share-option email" onclick="shareViaEmail(event)">
+                <div class="share-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <span>Email</span>
+            </a>
+            
+            <div class="share-option" onclick="copyLink()">
+                <div class="share-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <span>Copy Link</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Partial -->
+    <%- include('partials/footer') %>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Pass car data to JavaScript -->
+    <script>
+        window.currentCar = JSON.stringify(car);
+        window.currentImages = JSON.stringify(car.images || []);
+    </script>
+
+    <!-- ============================================ -->
+    <!-- ALL JAVASCRIPT FUNCTIONS - COMPLETE SET      -->
+    <!-- ============================================ -->
+    <script>
+        let currentFullscreenIndex = 0;
+
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.body.classList.add('background-loaded');
+            }, 100);
+            
+            setupEnquiryForm();
+            setupFavoriteButton();
+            checkFavoriteStatus(car.id);
+        });
+
+        // ========== IMAGE FUNCTIONS ==========
+        function changeMainImage(index) {
+            const mainImage = document.getElementById('mainCarImage');
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            
+            if (window.currentImages && window.currentImages[index]) {
+                mainImage.src = window.currentImages[index].imageUrl;
+                
+                thumbnails.forEach((thumb, i) => {
+                    thumb.classList.toggle('active', i === index);
+                });
+            }
+        }
+
+        function openFullscreenGallery(index) {
+            if (!window.currentImages || window.currentImages.length === 0) return;
+            
+            currentFullscreenIndex = index;
+            const gallery = document.getElementById('fullscreenGallery');
+            const image = document.getElementById('fullscreenImage');
+            const counter = document.getElementById('fullscreenCounter');
+            
+            image.src = window.currentImages[currentFullscreenIndex].imageUrl;
+            counter.textContent = `${currentFullscreenIndex + 1}/${window.currentImages.length}`;
+            gallery.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFullscreenGallery() {
+            const gallery = document.getElementById('fullscreenGallery');
+            gallery.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateFullscreenImage(direction) {
+            if (!window.currentImages || window.currentImages.length <= 1) return;
+            
+            currentFullscreenIndex = (currentFullscreenIndex + direction + window.currentImages.length) % window.currentImages.length;
+            
+            const image = document.getElementById('fullscreenImage');
+            const counter = document.getElementById('fullscreenCounter');
+            
+            image.src = window.currentImages[currentFullscreenIndex].imageUrl;
+            counter.textContent = `${currentFullscreenIndex + 1}/${window.currentImages.length}`;
+        }
+
+        // ========== FAVORITE FUNCTIONS ==========
+        function setupFavoriteButton() {
+            const favoriteBtn = document.querySelector('.favorite-btn');
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', toggleFavorite);
+            }
+        }
+
+        async function checkFavoriteStatus(carId) {
+            try {
+                const authResponse = await fetch('/api/auth/status');
+                const authData = await authResponse.json();
+                const favoriteBtn = document.querySelector('.favorite-btn');
+                
+                if (authData.authenticated) {
+                    const favResponse = await fetch(`/api/user/favorites/check/${carId}`);
+                    const favData = await favResponse.json();
+                    if (favData.isFavorited) {
+                        favoriteBtn.classList.add('favorited');
+                    }
+                } else {
+                    const favorites = JSON.parse(localStorage.getItem('favoriteCars') || '[]');
+                    if (favorites.includes(carId.toString())) {
+                        favoriteBtn.classList.add('favorited');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking favorite status:', error);
+            }
+        }
+
+        async function toggleFavorite() {
+            if (!window.currentCar) return;
+            
+            const favoriteBtn = document.querySelector('.favorite-btn');
+            const carId = window.currentCar.id;
+            const wasFavorited = favoriteBtn.classList.contains('favorited');
+            
+            try {
+                const authResponse = await fetch('/api/auth/status');
+                const authData = await authResponse.json();
+                
+                if (authData.authenticated) {
+                    if (wasFavorited) {
+                        const response = await fetch(`/api/user/favorites/${carId}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            favoriteBtn.classList.remove('favorited');
+                            showToast('Removed from favorites');
+                        }
+                    } else {
+                        const response = await fetch(`/api/user/favorites/${carId}`, { method: 'POST' });
+                        if (response.ok) {
+                            favoriteBtn.classList.add('favorited');
+                            showToast('Added to favorites');
+                        }
+                    }
+                } else {
+                    const favorites = JSON.parse(localStorage.getItem('favoriteCars') || '[]');
+                    const index = favorites.indexOf(carId.toString());
+                    
+                    if (index > -1) {
+                        favorites.splice(index, 1);
+                        favoriteBtn.classList.remove('favorited');
+                        showToast('Removed from favorites');
+                    } else {
+                        favorites.push(carId.toString());
+                        favoriteBtn.classList.add('favorited');
+                        showToast('Added to favorites');
+                    }
+                    
+                    localStorage.setItem('favoriteCars', JSON.stringify(favorites));
+                }
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                showToast('Error updating favorites', 'danger');
+            }
+        }
+
+        // ========== ENQUIRY FORM ==========
+        function setupEnquiryForm() {
+            const form = document.getElementById('carEnquiryForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const formData = {
+                        carId: document.getElementById('enquiryCarId').value,
+                        carName: document.getElementById('enquiryCarName').value,
+                        fullName: document.getElementById('enquiryFullName').value,
+                        email: document.getElementById('enquiryEmail').value,
+                        phone: document.getElementById('enquiryPhone').value,
+                        message: document.getElementById('enquiryMessage').value
+                    };
+                    
+                    try {
+                        const response = await fetch('/api/car-enquiries', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        if (response.ok) {
+                            showToast('Message sent successfully!');
+                            this.reset();
+                            const defaultMsg = `I would like to check the availability or enquire about the ${window.currentCar.year} ${window.currentCar.make} ${window.currentCar.model}. Please contact me with more information.`;
+                            document.getElementById('enquiryMessage').value = defaultMsg;
+                        } else {
+                            throw new Error('Failed to send message');
+                        }
+                    } catch (error) {
+                        console.error('Error sending enquiry:', error);
+                        showToast('Error sending message. Please try again.', 'danger');
+                    }
+                });
+            }
+        }
+
+        // ========== PRICE ALERT FUNCTIONS ==========
+        function openPriceAlertModal() {
+            document.getElementById('priceAlertModal').classList.add('active');
+            document.getElementById('priceAlertOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePriceAlertModal() {
+            document.getElementById('priceAlertModal').classList.remove('active');
+            document.getElementById('priceAlertOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        async function submitPriceAlert() {
+            const firstName = document.getElementById('alertFirstName').value;
+            const lastName = document.getElementById('alertLastName').value;
+            const phone = document.getElementById('alertPhone').value;
+            const email = document.getElementById('alertEmail').value;
+            const similarCars = document.getElementById('similarCars').checked;
+            
+            if (!firstName || !lastName || !phone || !email || !email.includes('@')) {
+                alert('Please fill in all required fields with valid information');
+                return;
+            }
+            
+            try {
+                const authResponse = await fetch('/api/auth/status');
+                const authData = await authResponse.json();
+                
+                const backendAlert = {
+                    firstName, lastName, email, phone,
+                    carId: window.currentCar.id,
+                    carMake: window.currentCar.make,
+                    carModel: window.currentCar.model,
+                    carYear: window.currentCar.year,
+                    carPrice: window.currentCar.price,
+                    carMileage: window.currentCar.mileage,
+                    carLocation: window.currentCar.location,
+                    similarCars
+                };
+                
+                let url = '/api/price-alerts';
+                if (authData.authenticated) {
+                    url = '/api/user/alerts';
+                    delete backendAlert.firstName;
+                    delete backendAlert.lastName;
+                    delete backendAlert.email;
+                    delete backendAlert.phone;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(backendAlert)
+                });
+                
+                if (!response.ok) throw new Error('Failed to save price alert');
+                
+                showToast('Price alert set successfully!');
+                closePriceAlertModal();
+                document.getElementById('priceAlertForm').reset();
+                
+            } catch (error) {
+                console.error('Error setting price alert:', error);
+                alert('There was an error setting your price alert: ' + error.message);
+            }
+        }
+
+        // ========== SHARE FUNCTIONS ==========
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+            document.getElementById('shareOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            document.getElementById('shareOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function getShareUrl() {
+            return `https://exidealers.com/car/${window.currentCar.slug}-${window.currentCar.id}`;
+        }
+
+        function getShareText() {
+            return `Check out this ${window.currentCar.year} ${window.currentCar.make} ${window.currentCar.model} for ${window.currentCar.price} on Exi Dealers Namibia`;
+        }
+
+        function shareOnWhatsApp(e) {
+            e.preventDefault();
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(getShareText() + ' ' + getShareUrl())}`;
+            window.open(url, '_blank');
+        }
+
+        function shareOnFacebook(e) {
+            e.preventDefault();
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank');
+        }
+
+        function shareOnTwitter(e) {
+            e.preventDefault();
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}&url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank');
+        }
+
+        function shareOnInstagram(e) {
+            e.preventDefault();
+            window.open('https://www.instagram.com/', '_blank');
+        }
+
+        function shareViaEmail(e) {
+            e.preventDefault();
+            const subject = `Check out this ${window.currentCar.year} ${window.currentCar.make} ${window.currentCar.model}`;
+            const body = `${getShareText()}\n\n${getShareUrl()}`;
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(getShareUrl()).then(() => {
+                showToast('Link copied to clipboard!');
+                closeShareModal();
+            });
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showToast(message, type = 'success') {
+            let toastElement = document.getElementById('actionToast');
+            if (!toastElement) {
+                const toastContainer = document.createElement('div');
+                toastContainer.innerHTML = `
+                    <div id="actionToast" class="toast align-items-center text-white bg-${type} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toastContainer.firstElementChild);
+                toastElement = document.getElementById('actionToast');
+            }
+            
+            const toastBody = toastElement.querySelector('.toast-body');
+            toastBody.textContent = message;
+            toastElement.classList.remove('bg-success', 'bg-danger');
+            toastElement.classList.add(`bg-${type}`);
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        function showError(message) {
+            const container = document.querySelector('.car-details-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="text-danger">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <h3>Error Loading Car</h3>
+                            <p>${message}</p>
+                            <a href="/view" class="btn btn-dark mt-3">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Browse Cars
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Keyboard events
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFullscreenGallery();
+                closePriceAlertModal();
+                closeShareModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -71,7 +71,15 @@ const Car = sequelize.define('Car', {
   driveType: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+dealerId: {
+  type: DataTypes.INTEGER,
+  allowNull: true,
+  references: {
+    model: 'dealers',
+    key: 'id'
   }
+}
 }, {
   tableName: 'cars',
   timestamps: true

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="used cars Namibia, second hand cars Windhoek, luxury cars Swakopmund, car finance Namibia, Toyota Namibia, BMW Windhoek, Mercedes-Benz Walvis Bay, affordable cars Oshakati, Exi Dealers">
     <title>Contact Us | Exi Dealers</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <!-- Meta Pixel Code -->
@@ -158,7 +158,7 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
 </style>
 </head>
 <body>
-    <!-- Navigation -->
+<!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
         <a class="navbar-brand" href="index.html">
@@ -172,9 +172,31 @@ src="https://www.facebook.com/tr?id=1669192747799799&ev=PageView&noscript=1"
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="/view">Browse Cars</a></li>
                 <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
-                <li class="nav-item dropdown" id="userDropdownContainer">
-                    <!-- User dropdown will be inserted here by JavaScript -->
+                
+                <!-- Sign In Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="signInDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i> Sign In
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="signInDropdown">
+                        <li><a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt me-2"></i>User Sign In</a></li>
+                        <li><a class="dropdown-item" href="/register"><i class="fas fa-user-plus me-2"></i>User Register</a></li>
+                    </ul>
                 </li>
+                
+                <!-- Dealers Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dealersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-tie me-1"></i> Dealers
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dealersDropdown">
+                        <li><a class="dropdown-item" href="/dealer-login"><i class="fas fa-sign-in-alt me-2"></i>Dealer Sign In</a></li>
+                        <li><a class="dropdown-item" href="/dealer-register"><i class="fas fa-user-plus me-2"></i>Dealer Register</a></li>
+                    </ul>
+                </li>
+                
+                <!-- User dropdown container (for logged in users) -->
+                <li class="nav-item dropdown" id="userDropdownContainer" style="display: none;"></li>
             </ul>
         </div>
     </div>
@@ -251,8 +273,68 @@ async function logoutUser() {
     font-weight: 700;
     margin-right: 5px;
 }
-</style>
 
+/* Enhanced dropdown styling */
+.dropdown-menu {
+    background: rgba(33, 37, 41, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 0;
+    margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-item {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding-left: 25px;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    border-top-color: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+}
+
+/* Active dropdown styling */
+.nav-item.dropdown.show .nav-link {
+    color: #ffc107 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .dropdown-menu {
+        background: transparent;
+        border: none;
+        padding-left: 20px;
+    }
+    
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+</style>
     <!-- Page Header -->
     <header class="contact-header py-5">
         <div class="overlay"></div>
@@ -543,6 +625,115 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  "name": "Exi Dealers Namibia",
+  "image": "https://exidealers.com/logo.png",
+  "url": "https://exidealers.com",
+  "telephone": "+264812675760",
+  "email": "sales@exidealers.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Windhoek",
+    "addressCountry": "NA"
+  },
+  "priceRange": "$$",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Windhoek"
+    },
+    {
+      "@type": "City", 
+      "name": "Swakopmund"
+    },
+    {
+      "@type": "City",
+      "name": "Walvis Bay"
+    },
+    {
+      "@type": "City",
+      "name": "Oshakati"
+    }
+  ]
+}
+</script>
+
+<script>
+// Add this script to the bottom of each page (before closing body tag)
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadUserNavigation();
+});
+
+async function loadUserNavigation() {
+    try {
+        const response = await fetch('/api/auth/status');
+        const data = await response.json();
+        
+        const container = document.getElementById('userDropdownContainer');
+        const signInDropdown = document.getElementById('signInDropdown').parentElement;
+        const dealersDropdown = document.getElementById('dealersDropdown').parentElement;
+        
+        if (data.authenticated) {
+            // Hide Sign In and Dealers dropdowns when user is logged in
+            signInDropdown.style.display = 'none';
+            dealersDropdown.style.display = 'none';
+            
+            // Show user dropdown
+            container.style.display = 'list-item';
+            container.innerHTML = `
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                    <span class="user-initials" style="width: 35px; height: 35px; background: #ffc107; color: #1a365d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 5px;">
+                        ${data.user.initials}
+                    </span>
+                    ${data.user.firstName}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile#favorites"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                    <li><a class="dropdown-item" href="/profile#saved"><i class="fas fa-bookmark me-2"></i>Saved Cars</a></li>
+                    <li><a class="dropdown-item" href="/profile#alerts"><i class="fas fa-bell me-2"></i>Price Alerts</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            `;
+        } else {
+            // Show Sign In and Dealers dropdowns
+            signInDropdown.style.display = 'list-item';
+            dealersDropdown.style.display = 'list-item';
+            container.style.display = 'none';
+        }
+        
+        // Initialize Bootstrap dropdowns
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+    } catch (error) {
+        console.error('Error loading navigation:', error);
+    }
+}
+
+async function logoutUser() {
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.reload();
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
+</script>
 
     <script src="script.js"></script>
 </body>
